@@ -91,11 +91,11 @@ def parse_chord(c_str):
         
     return root, quality, intervals
 
-def solve_drop2(root, ivs, prev_voicing=None):
-    """Solves smooth mid-register Drop-2 jazz voicing for Left E-Piano."""
-    base = [(root + iv) % 12 for iv in ivs]
-    base_oct = sorted([60 + b for b in base])
-    drop2 = sorted([base_oct[2] - 12, base_oct[0], base_oct[1], base_oct[3]])
+def solve_thiri_drop2(root, ivs, prev_voicing=None):
+    """Solves smooth mid-register Drop-2 jazz voicing for Left E-Piano under strict THIRI governance."""
+    base_pc = [(root + iv) % 12 for iv in ivs]
+    oct4_notes = sorted([60 + pc for pc in base_pc])
+    drop2 = sorted([oct4_notes[2] - 12, oct4_notes[0], oct4_notes[1], oct4_notes[3]])
     
     if prev_voicing is not None:
         best_diff = float('inf')
@@ -112,18 +112,18 @@ def solve_drop2(root, ivs, prev_voicing=None):
         return best_v
     return drop2
 
-def solve_spread_voicing(root, ivs, prev_voicing=None):
-    """Solves open spread upper-extension voicing for Right Detuned Piano."""
-    base = [(root + iv) % 12 for iv in ivs]
-    # Shift up into upper octave (MIDI 62 to 80)
-    octave_notes = sorted([67 + b for b in base])
-    spread = sorted([octave_notes[0] - 5, octave_notes[1], octave_notes[2], octave_notes[3] + 2])
+def solve_thiri_drop3(root, ivs, prev_voicing=None):
+    """Solves open upper-register Drop-3 jazz voicing for Right Detuned Piano under strict THIRI governance."""
+    base_pc = [(root + iv) % 12 for iv in ivs]
+    oct5_notes = sorted([72 + pc for pc in base_pc])
+    # Drop-3: drop third note from the top by 1 octave (-12 semitones)
+    drop3 = sorted([oct5_notes[1] - 12, oct5_notes[0], oct5_notes[2], oct5_notes[3]])
     
     if prev_voicing is not None:
         best_diff = float('inf')
-        best_v = spread
+        best_v = drop3
         for oct_shift in [-12, 0, 12]:
-            shifted = [p + oct_shift for p in spread]
+            shifted = [p + oct_shift for p in drop3]
             if any(p < 55 or p > 84 for p in shifted):
                 continue
             for perm in itertools.permutations(shifted):
@@ -132,7 +132,33 @@ def solve_spread_voicing(root, ivs, prev_voicing=None):
                     best_diff = diff
                     best_v = list(perm)
         return best_v
-    return spread
+    return drop3
+
+def audit_thiri_governance(chords_list, roots, voicings_l, voicings_r):
+    """Mathematically verifies that 100% of notes follow THIRI pitch classes and guide tones."""
+    total_notes = 0
+    clam_count = 0
+    gt_locked = 0
+    for idx, c_str in enumerate(chords_list):
+        r, q, ivs = parse_chord(c_str)
+        valid_pcs = set((r + iv) % 12 for iv in ivs)
+        guide_tones = { (r + ivs[0]) % 12, (r + ivs[2]) % 12 }
+        
+        notes_l = voicings_l[idx]
+        notes_r = voicings_r[idx]
+        
+        for p in notes_l + notes_r:
+            total_notes += 1
+            if (p % 12) not in valid_pcs:
+                clam_count += 1
+                
+        all_pcs = set(p % 12 for p in notes_l + notes_r)
+        if guide_tones.issubset(all_pcs):
+            gt_locked += 1
+            
+    clam_rate = (clam_count / total_notes * 100.0) if total_notes > 0 else 0.0
+    gt_comp = (gt_locked / len(chords_list) * 100.0) if chords_list else 100.0
+    return f"{clam_rate:.1f}%", f"{gt_comp:.1f}%"
 
 def get_bass_midi(root):
     midi = 36 + (root % 12)
@@ -216,7 +242,7 @@ def synth_4bar_chunk(chords_list, drum_mode='lofi', chaos=1.0, prev_voicing_left
     buf[:, 0] += (noise_L + dust) * 0.18
     buf[:, 1] += (noise_R + dust) * 0.18
     
-    # 2. Parse and solve voicings for both keyboards
+    # 2. Parse and solve voicings for both keyboards under THIRI governance
     voicings_left = []
     voicings_right = []
     roots = []
@@ -224,11 +250,14 @@ def synth_4bar_chunk(chords_list, drum_mode='lofi', chaos=1.0, prev_voicing_left
     curr_vr = prev_voicing_right
     for c_str in chords_list:
         r, q, ivs = parse_chord(c_str)
-        curr_vl = solve_drop2(r, ivs, curr_vl)
-        curr_vr = solve_spread_voicing(r, ivs, curr_vr)
+        curr_vl = solve_thiri_drop2(r, ivs, curr_vl)
+        curr_vr = solve_thiri_drop3(r, ivs, curr_vr)
         voicings_left.append(curr_vl)
         voicings_right.append(curr_vr)
         roots.append(get_bass_midi(r))
+        
+    # Audit THIRI harmonic governance in real time (verify 0.0% clam rate)
+    clam_rate, gt_comp = audit_thiri_governance(chords_list, roots, voicings_left, voicings_right)
         
     # 3. Synthesize Pure Sine Sub-Bass (Deep 808 Pocket)
     for b_idx in range(4):
@@ -422,7 +451,7 @@ def synth_4bar_chunk(chords_list, drum_mode='lofi', chaos=1.0, prev_voicing_left
     if peak > 0.95:
         buf = buf / peak * 0.95
         
-    return buf, voicings_left[-1], voicings_right[-1]
+    return buf, voicings_left[-1], voicings_right[-1], clam_rate, gt_comp
 
 def read_stream_state():
     try:
@@ -433,7 +462,7 @@ def read_stream_state():
         pass
     return {}
 
-def update_live_overlay_files(cmd, author, chords, drums, bpm=90.0, mantra=None, voice=None):
+def update_live_overlay_files(cmd, author, chords, drums, bpm=90.0, mantra=None, voice=None, clam_rate="0.0%", gt_comp="100.0%"):
     clean_author = author if author.startswith('@') else f"@{author}"
     if mantra:
         cmd_text = f"MANTRA: \"{mantra}\" [{voice or 'Rachel'}] (by {clean_author})"
@@ -441,7 +470,7 @@ def update_live_overlay_files(cmd, author, chords, drums, bpm=90.0, mantra=None,
         cmd_text = f"PROMPT: {cmd}  [Steered by {clean_author}]"
         
     chords_text = f"CHORDS: {' -> '.join(chords)}  |  TEMPO: {int(bpm)} BPM (Lo-Fi)"
-    status_text = f"THIRI SANCTUARY: DUAL PIANOS (RHODES L + DETUNED R) | 432 Hz RESONANCE"
+    status_text = f"THIRI GOVERNOR: {clam_rate} CLAMS | GUIDE TONES: {gt_comp} LOCKED | 432 Hz"
     
     for path, content in [
         ('/tmp/thiri_live_cmd.txt', cmd_text),
@@ -514,19 +543,8 @@ def main():
 
         last_cmd = state.get("last_command", f"!prog {' | '.join(chords)}")
 
-        update_live_overlay_files(
-            cmd=last_cmd,
-            author=author,
-            chords=chords,
-            drums=drums,
-            bpm=bpm,
-            mantra=mantra,
-            voice=voice
-        )
-
-        print(f"⚡ [DUAL PIANO ACTIVE] {source_desc} | Drums={drums} | Tempo={bpm} BPM")
-
-        chunk_f32, last_voicing_left, last_voicing_right = synth_4bar_chunk(
+        # Synthesize chunk under THIRI governance
+        chunk_f32, last_voicing_left, last_voicing_right, clam_rate, gt_comp = synth_4bar_chunk(
             chords_list=chords,
             drum_mode=drums,
             chaos=chaos,
@@ -535,6 +553,20 @@ def main():
             trigger_bowl=trigger_bowl,
             bpm=bpm
         )
+
+        update_live_overlay_files(
+            cmd=last_cmd,
+            author=author,
+            chords=chords,
+            drums=drums,
+            bpm=bpm,
+            mantra=mantra,
+            voice=voice,
+            clam_rate=clam_rate,
+            gt_comp=gt_comp
+        )
+
+        print(f"⚡ [THIRI DUAL PIANO] {source_desc} | Clams={clam_rate} | GT={gt_comp} | Drums={drums} | Tempo={bpm} BPM")
         
         # Apply 15ms equal-power crossfade at chunk boundary
         fade_in = np.linspace(0.0, 1.0, fade_len)[:, np.newaxis]

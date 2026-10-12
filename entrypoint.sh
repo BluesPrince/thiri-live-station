@@ -39,7 +39,7 @@ echo "================================================================="
 # Initialize dynamic HUD files
 echo "PROMPT: !mantra \"Peace within, clarity around\" !voice rachel" > /tmp/thiri_live_cmd.txt
 echo "CHORDS: Dm9  ->  G13  ->  Cmaj9  ->  A7alt  |  TEMPO: 90 BPM (Lo-Fi)" > /tmp/thiri_live_chords.txt
-echo "THIRI SANCTUARY: 432 Hz RESONANCE | VINYL CALM: ACTIVE | BOWL: READY" > /tmp/thiri_live_status.txt
+echo "THIRI GOVERNOR: 0.0% CLAMS | GUIDE TONES: 100% LOCKED | 432 Hz" > /tmp/thiri_live_status.txt
 
 # Start harmonic synthesis daemon
 python3 /app/live_harmonic_generator.py &
