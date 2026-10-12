@@ -1,53 +1,72 @@
 #!/usr/bin/env python3
-"""YouTube Live Chat Listener for Promptable Generative Audio
+"""YouTube Live Chat Listener for Interactive Lo-Fi Sanctuary
 Connects directly to the live stream chat using pytchat (zero API keys).
-Parses commands: !key <note>, !chaos <0.2-2.0>, !drop, !breakdown, !scores.
-Updates stream_state.json to steer THIRI & Google Magenta in real time.
+Parses audience commands:
+- !mantra <quote> [!voice <name>] (ElevenLabs voice affirmations with ducking)
+- !voice <rachel|adam|aura|monk>
+- !bowl (Triggers 432 Hz crystal singing bowl harmonic chime)
+- !beat <on|off|lofi|mute> (Toggle drums)
+- !prog <chords...> (Jazz chord steering)
+- !bpm <60-90> (Adjust tempo)
+- !key <note> (Modulate key)
+- !chaos <0.2-2.0> (Harmonic density)
 """
-import sys, os, time, json, re
+import sys, os, time, json, re, hashlib, shutil
+import requests
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 STATE_FILE = os.path.join(HERE, 'stream_state.json')
+CACHE_DIR = os.path.join(HERE, 'cache', 'mantras')
+VOICE_QUEUE_DIR = '/tmp/thiri_voice_queue'
+os.makedirs(CACHE_DIR, exist_ok=True)
+os.makedirs(VOICE_QUEUE_DIR, exist_ok=True)
+
+# Curated ElevenLabs soothing voice IDs
+ELEVEN_VOICES = {
+    'rachel': '21m00Tcm4TlvDq8ikWAM',   # Calm, warm female
+    'aura': 'XB0fDUnXU5ikFXAm1I05',     # Meditative, soft female
+    'charlotte': 'XB0fDUnXU5ikFXAm1I05',
+    'adam': 'pNInz6obpgDQGcFmaJgB',     # Deep, grounding male
+    'monk': 'TxGEqnHWrfWFTfGW9XjX',     # Resonant, slow cadence male
+    'marcus': 'TxGEqnHWrfWFTfGW9XjX'
+}
+DEFAULT_VOICE = 'rachel'
 
 VALID_KEYS = {
     'C', 'G', 'D', 'A', 'E', 'B', 'F#', 'GB', 'DB', 'C#', 
     'AB', 'G#', 'EB', 'D#', 'BB', 'A#', 'F'
 }
-
-# Standard normalization
-KEY_MAP = {
-    'GB': 'F#', 'C#': 'Db', 'G#': 'Ab', 'D#': 'Eb', 'A#': 'Bb'
-}
+KEY_MAP = {'GB': 'F#', 'C#': 'Db', 'G#': 'Ab', 'D#': 'Eb', 'A#': 'Bb'}
 
 def normalize_key(k_raw):
     k = k_raw.strip().upper()
-    if k in KEY_MAP:
-        k = KEY_MAP[k]
+    if k in KEY_MAP: k = KEY_MAP[k]
     if k in VALID_KEYS:
-        # Title case format: F#, Db, Bb, C
-        if len(k) == 2 and k[1] == 'B':
-            return k[0] + 'b'
+        if len(k) == 2 and k[1] == 'B': return k[0] + 'b'
         return k
     return None
 
 def init_state():
     default_state = {
         "active_key": "C",
-        "tempo_bpm": 140.0,
-        "entropy_tau": 1.8,
-        "mode": "dubstep_drop",
+        "tempo_bpm": 78.0,
+        "entropy_tau": 1.0,
+        "mode": "lofi_sanctuary",
+        "drums": "lofi",
         "last_command": "INITIALIZED",
         "commanded_by": "@BluesPrinceMedia",
-        "updated_at": time.time(),
-        "clam_rate": "0.0%",
-        "guide_tone_compliance": "100.0%"
+        "active_mantra": "Peace within, clarity around",
+        "active_voice": "Rachel",
+        "trigger_bowl": False,
+        "updated_at": time.time()
     }
     if os.path.exists(STATE_FILE):
         try:
             with open(STATE_FILE, 'r') as f:
                 existing = json.load(f)
-                if isinstance(existing, dict) and "custom_progression" in existing:
-                    return existing
+                if isinstance(existing, dict):
+                    default_state.update(existing)
+                    return default_state
         except Exception:
             pass
             
@@ -69,6 +88,67 @@ def update_state(updates):
         json.dump(state, f, indent=2)
     return state
 
+def synthesize_mantra(raw_text, voice_name='rachel'):
+    """Synthesizes text using ElevenLabs API with phonetic rule and disk caching."""
+    clean_text = raw_text.strip().strip('"').strip("'")
+    if not clean_text:
+        return None
+        
+    # Enforce THIRI -> "Theory" pronunciation rule for TTS
+    tts_text = re.sub(r'\bthiri\b', 'Theory', clean_text, flags=re.IGNORECASE)
+    
+    voice_key = voice_name.lower().strip()
+    voice_id = ELEVEN_VOICES.get(voice_key, ELEVEN_VOICES[DEFAULT_VOICE])
+    
+    # Hash based on clean written text and voice
+    text_hash = hashlib.md5(f"{voice_id}_{tts_text.lower()}".encode('utf-8')).hexdigest()
+    cached_wav = os.path.join(CACHE_DIR, f"{voice_key}_{text_hash}.wav")
+    
+    # 1. Check cache first (zero cost!)
+    if os.path.exists(cached_wav) and os.path.getsize(cached_wav) > 1000:
+        print(f"⚡ [CACHE HIT] Mantra found in cache: '{clean_text}' ({voice_key})")
+        queue_dest = os.path.join(VOICE_QUEUE_DIR, f"{int(time.time()*1000)}_{text_hash}.wav")
+        shutil.copyfile(cached_wav, queue_dest)
+        return queue_dest
+        
+    # 2. Call ElevenLabs API if key is available
+    api_key = os.environ.get('ELEVENLABS_API_KEY', '').strip()
+    if not api_key:
+        print(f"⚡ [NOTICE] ELEVENLABS_API_KEY not set. Displaying mantra on HUD without audio: '{clean_text}'")
+        return None
+        
+    print(f"🎙️ [ELEVENLABS] Synthesizing mantra: '{clean_text}' with voice {voice_key}...")
+    url = f"https://api.elevenlabs.io/v1/text-to-speech/{voice_id}/stream"
+    headers = {
+        "xi-api-key": api_key,
+        "Content-Type": "application/json",
+        "Accept": "audio/wav"
+    }
+    payload = {
+        "text": tts_text,
+        "model_id": "eleven_monolingual_v1",
+        "voice_settings": {
+            "stability": 0.75,
+            "similarity_boost": 0.75
+        }
+    }
+    
+    try:
+        resp = requests.post(url, json=payload, headers=headers, timeout=12)
+        if resp.status_code == 200:
+            with open(cached_wav, 'wb') as f:
+                f.write(resp.content)
+            queue_dest = os.path.join(VOICE_QUEUE_DIR, f"{int(time.time()*1000)}_{text_hash}.wav")
+            shutil.copyfile(cached_wav, queue_dest)
+            print(f"✅ [ELEVENLABS] Synthesized & Queued: {queue_dest}")
+            return queue_dest
+        else:
+            print(f"⚠️ [ELEVENLABS] API Error {resp.status_code}: {resp.text}")
+    except Exception as e:
+        print(f"⚠️ [ELEVENLABS] Request failed: {e}")
+        
+    return None
+
 def parse_single_command(text, author_name):
     clean_author = author_name.lstrip('@')
     parts = text.split()
@@ -76,109 +156,81 @@ def parse_single_command(text, author_name):
         return None
     cmd = parts[0].lower()
     
-    # 1. Modulate Key: !key <note>
-    if cmd == '!key' and len(parts) > 1:
+    # 1. Spoken Affirmation / Mantra: !mantra <quote...> [!voice <name>]
+    if cmd in ('!mantra', '!affirmation', '!meditate'):
+        # Extract voice if specified
+        voice = DEFAULT_VOICE
+        mantra_body = text[len(parts[0]):].strip()
+        v_match = re.search(r'!voice\s+([a-zA-Z0-9_-]+)', mantra_body, flags=re.IGNORECASE)
+        if v_match:
+            voice = v_match.group(1).lower()
+            mantra_body = re.sub(r'!voice\s+[a-zA-Z0-9_-]+', '', mantra_body, flags=re.IGNORECASE).strip()
+            
+        clean_mantra = mantra_body.strip('"').strip("'")
+        if len(clean_mantra) > 140:
+            clean_mantra = clean_mantra[:137] + "..."
+            
+        if clean_mantra:
+            # Trigger background synthesis / queueing
+            synthesize_mantra(clean_mantra, voice)
+            return {
+                "active_mantra": clean_mantra,
+                "active_voice": voice.capitalize(),
+                "last_command": f"!mantra \"{clean_mantra}\"",
+                "commanded_by": f"@{clean_author}"
+            }
+
+    # 2. Singing Bowl Trigger: !bowl / !chime / !bell
+    elif cmd in ('!bowl', '!chime', '!bell', '!gong'):
+        return {
+            "trigger_bowl": True,
+            "last_command": "!bowl (432 Hz crystal chime)",
+            "commanded_by": f"@{clean_author}"
+        }
+
+    # 3. Drum / Beat Control: !beat <on|off|lofi|mute> or !drums
+    elif cmd in ('!beat', '!drums', '!drum'):
+        sub = parts[1].lower() if len(parts) > 1 else 'on'
+        if sub in ('off', 'mute', 'cut', 'stop', 'quiet'):
+            return {
+                "drums": "off",
+                "last_command": "!beat off",
+                "commanded_by": f"@{clean_author}"
+            }
+        else:
+            return {
+                "drums": "lofi",
+                "last_command": "!beat lofi",
+                "commanded_by": f"@{clean_author}"
+            }
+
+    # 4. Tempo / BPM: !bpm <60-95>
+    elif cmd in ('!bpm', '!tempo') and len(parts) > 1:
+        try:
+            val = float(parts[1])
+            val = max(60.0, min(95.0, val)) # Clamp to lo-fi pocket
+            return {
+                "tempo_bpm": round(val, 1),
+                "last_command": f"!bpm {val:.0f}",
+                "commanded_by": f"@{clean_author}"
+            }
+        except ValueError:
+            return None
+
+    # 5. Modulate Key: !key <note>
+    elif cmd == '!key' and len(parts) > 1:
         raw_key = parts[1]
         norm_key = normalize_key(raw_key)
         if norm_key:
             return {
                 "active_key": norm_key,
                 "last_command": f"!key {norm_key}",
-                "commanded_by": f"@{author_name}"
-            }
-        else:
-            print(f"  [IGNORE] Invalid key requested by @{author_name}: {raw_key}")
-            return None
-            
-    # 2. Modulate Chaos / Entropy: !chaos <0.2 - 2.0> or !temp
-    elif cmd in ('!chaos', '!temp', '!entropy') and len(parts) > 1:
-        try:
-            val = float(parts[1])
-            val = max(0.2, min(2.0, val)) # Clamp to safe bounds
-            return {
-                "entropy_tau": round(val, 2),
-                "last_command": f"!chaos {val:.1f}",
-                "commanded_by": f"@{author_name}"
-            }
-        except ValueError:
-            return None
-            
-    # 3. Solo Bell Breakdown / Mute Drums: !breakdown or !drums off
-    elif cmd in ('!breakdown', '!mutedrums', '!nodrums'):
-        return {
-            "mode": "solo_breakdown",
-            "drums": "off",
-            "last_command": "!breakdown (drums muted)",
-            "commanded_by": f"@{author_name}"
-        }
-        
-    # 4. Halftime Dubstep Drop: !drop or !drums on
-    elif cmd in ('!drop', '!drumsdrop'):
-        return {
-            "mode": "dubstep_drop",
-            "drums": "halftime_dubstep",
-            "last_command": "!drop (halftime dubstep)",
-            "commanded_by": f"@{author_name}"
-        }
-
-    # 4b. Dedicated Drum Commands: !drums <pattern>
-    elif cmd in ('!drums', '!drum'):
-        sub = parts[1].lower() if len(parts) > 1 else 'on'
-        if sub in ('off', 'mute', 'stop', 'cut'):
-            return {
-                "mode": "solo_breakdown",
-                "drums": "off",
-                "last_command": "!drums off",
-                "commanded_by": f"@{author_name}"
-            }
-        elif sub in ('on', 'dubstep', 'halftime'):
-            return {
-                "mode": "dubstep_drop",
-                "drums": "halftime_dubstep",
-                "last_command": "!drums dubstep",
-                "commanded_by": f"@{author_name}"
-            }
-        elif sub in ('four', 'house', 'techno', '4x4'):
-            return {
-                "mode": "four_on_the_floor",
-                "drums": "four_on_floor",
-                "last_command": "!drums four",
-                "commanded_by": f"@{author_name}"
-            }
-        elif sub in ('trap', 'triplet', 'rolls'):
-            return {
-                "mode": "trap_groove",
-                "drums": "trap_rolls",
-                "last_command": "!drums trap",
-                "commanded_by": f"@{author_name}"
-            }
-        elif sub in ('dnb', 'jungle', 'breakbeat', 'double'):
-            return {
-                "mode": "dnb_break",
-                "drums": "double_time",
-                "last_command": "!drums dnb",
-                "commanded_by": f"@{author_name}"
-            }
-        else:
-            return {
-                "drums": sub,
-                "last_command": f"!drums {sub}",
-                "commanded_by": f"@{author_name}"
+                "commanded_by": f"@{clean_author}"
             }
 
-    # 4c. Drum Density: !density <low|med|high|1-5>
-    elif cmd in ('!density', '!groove') and len(parts) > 1:
-        d_val = parts[1].lower()
-        return {
-            "drum_density": d_val,
-            "last_command": f"!density {d_val}",
-            "commanded_by": f"@{author_name}"
-        }
-        
-    # 5. Drive Chord Progression: !prog <chords...> or !chord <chord>
+    # 6. Drive Chord Progression: !prog <chords...>
     elif cmd in ('!prog', '!chords', '!chord') and len(parts) > 1:
         prog_raw = text[len(parts[0]):].strip()
-        # Parse chords split by pipe, comma, or spaces
         if '|' in prog_raw:
             chord_list = [c.strip() for c in prog_raw.split('|') if c.strip()]
         elif ',' in prog_raw:
@@ -193,6 +245,19 @@ def parse_single_command(text, author_name):
                 "last_command": f"!prog {clean_str}",
                 "commanded_by": f"@{clean_author}"
             }
+
+    # 7. Chaos / Harmonic Density: !chaos <0.2 - 2.0>
+    elif cmd in ('!chaos', '!temp', '!entropy') and len(parts) > 1:
+        try:
+            val = float(parts[1])
+            val = max(0.2, min(2.0, val))
+            return {
+                "entropy_tau": round(val, 2),
+                "last_command": f"!chaos {val:.1f}",
+                "commanded_by": f"@{clean_author}"
+            }
+        except ValueError:
+            return None
             
     return None
 
@@ -202,7 +267,6 @@ def parse_command(msg_text, author_name):
         return None
         
     clean_author = author_name.lstrip('@')
-    # Match each !command and its trailing arguments up until the next !command
     chunks = re.findall(r'(![a-zA-Z0-9_]+(?:(?!\s*![a-zA-Z0-9_]+).)*)', text)
     if not chunks:
         chunks = [text]
@@ -229,33 +293,22 @@ def parse_command(msg_text, author_name):
 
 def main():
     if len(sys.argv) < 2:
-        print("=================================================================")
-        print("   THIRI // YOUTUBE LIVE CHAT PROMPT LISTENER")
-        print("=================================================================")
-        print("Usage: python3 youtube_chat_listener.py <YOUTUBE_VIDEO_ID_OR_URL>")
-        print("Example: python3 youtube_chat_listener.py dQw4w9WgXcQ")
-        print("=================================================================")
+        print("Usage: python3 youtube_chat_listener.py <YOUTUBE_VIDEO_ID>")
         sys.exit(1)
         
     target = sys.argv[1].strip()
-    
-    # Extract video ID from URL if full link passed
     if "youtube.com" in target or "youtu.be" in target:
         m = re.search(r'(?:v=|\/live\/|\.be\/)([a-zA-Z0-9_-]{11})', target)
-        if m:
-            video_id = m.group(1)
-        else:
-            print(f"Could not extract video ID from URL: {target}")
-            sys.exit(1)
+        video_id = m.group(1) if m else target
     else:
         video_id = target
         
     print("=================================================================")
-    print("   THIRI // LIVE CHAT PROMPT LISTENER INITIALIZING")
+    print("   THIRI // LO-FI SANCTUARY CHAT LISTENER INITIALIZING")
     print("=================================================================")
     print(f"Connecting to YouTube Video ID: {video_id}")
     print(f"Writing state updates to:       {STATE_FILE}")
-    print("Commands supported:             !key <note>, !chaos <0.2-2.0>, !drop, !breakdown")
+    print("Commands supported:             !mantra, !bowl, !beat, !bpm, !prog, !key")
     print("=================================================================")
     
     init_state()
@@ -269,7 +322,7 @@ def main():
     while True:
         try:
             chat = pytchat.create(video_id=video_id)
-            print(f"Connected! Listening to live comments on stream {video_id}...\n")
+            print(f"Connected! Listening to live chat on stream {video_id}...\n")
             
             while chat.is_alive():
                 for c in chat.get().sync_items():
@@ -279,7 +332,7 @@ def main():
                     if action:
                         new_state = update_state(action)
                         print(f"⚡ [PROMPT RECEIVED] @{author}: '{msg}'")
-                        print(f"   -> Updated state: Key={new_state.get('active_key')} | Chaos={new_state.get('entropy_tau')} | Mode={new_state.get('mode')}\n")
+                        print(f"   -> State: Mantra='{new_state.get('active_mantra')}' | Chords={new_state.get('custom_progression')} | Beat={new_state.get('drums')}\n")
                 time.sleep(1.0)
                 
             print(f"[CHAT LISTENER] Disconnected from {video_id}. Reconnecting in 5 seconds...")

@@ -37,9 +37,9 @@ echo "Font file:    $FONT"
 echo "================================================================="
 
 # Initialize dynamic HUD files
-echo "COMMAND: !prog D-7 | G7 | Cmaj7  [Steered by @BluesPrinceMedia]" > /tmp/thiri_live_cmd.txt
-echo "NOW PLAYING: Dm7  ->  G7  ->  Cmaj7  ->  Cmaj7 (Drop-2 Voicing)" > /tmp/thiri_live_chords.txt
-echo "THIRI GOVERNOR: 0.0% CLAMS | GUIDE TONES: 100% LOCKED | DRUMS: HALFTIME" > /tmp/thiri_live_status.txt
+echo "PROMPT: !mantra \"Peace within, clarity around\" !voice rachel" > /tmp/thiri_live_cmd.txt
+echo "CHORDS: Dm9  ->  G13  ->  Cmaj9  ->  A7alt  |  TEMPO: 78 BPM (Lo-Fi)" > /tmp/thiri_live_chords.txt
+echo "THIRI SANCTUARY: 432 Hz RESONANCE | VINYL CALM: ACTIVE | BOWL: READY" > /tmp/thiri_live_status.txt
 
 # Start harmonic synthesis daemon
 python3 /app/live_harmonic_generator.py &
@@ -71,8 +71,8 @@ while true; do
       -i "$VISUAL" \
       -f s16le -ar 48000 -ac 2 \
       -i "$FIFO" \
-      -vf "drawbox=x=950:y=860:w=920:h=170:color=0x060844@0.95:t=fill,drawbox=x=950:y=860:w=920:h=170:color=0xDEB938@0.9:t=2,drawbox=x=950:y=860:w=920:h=32:color=0x181E64@0.95:t=fill,drawtext=fontfile='$FONT':text='LIVE AUDIENCE CONTROL  |  REAL-TIME CHAT STEERING':x=970:y=868:fontsize=15:fontcolor=0xDEB938,drawtext=fontfile='$FONT':textfile='/tmp/thiri_live_cmd.txt':expansion=none:reload=1:x=970:y=904:fontsize=18:fontcolor=0x00D2FF,drawtext=fontfile='$FONT':textfile='/tmp/thiri_live_chords.txt':expansion=none:reload=1:x=970:y=936:fontsize=18:fontcolor=0xFFFFFF,drawtext=fontfile='$FONT':textfile='/tmp/thiri_live_status.txt':expansion=none:reload=1:x=970:y=968:fontsize=15:fontcolor=0x2ECC71" \
-      -c:v libx264 -preset veryfast -b:v 4500k -maxrate 5000k -bufsize 8000k -pix_fmt yuv420p -g 60 -keyint_min 60 -r 30 \
+      -vf "drawbox=x=950:y=860:w=920:h=170:color=0x0a0c1a@0.93:t=fill,drawbox=x=950:y=860:w=920:h=170:color=0xDEB938@0.9:t=2,drawbox=x=950:y=860:w=920:h=32:color=0x181a2e@0.95:t=fill,drawtext=fontfile='$FONT':text='THIRI  //  24/7 LO-FI SANCTUARY & LIVE AUDIENCE STEERING':x=970:y=868:fontsize=15:fontcolor=0xDEB938,drawtext=fontfile='$FONT':textfile='/tmp/thiri_live_cmd.txt':expansion=none:reload=1:x=970:y=904:fontsize=18:fontcolor=0x00D2FF,drawtext=fontfile='$FONT':textfile='/tmp/thiri_live_chords.txt':expansion=none:reload=1:x=970:y=936:fontsize=18:fontcolor=0xFFFFFF,drawtext=fontfile='$FONT':textfile='/tmp/thiri_live_status.txt':expansion=none:reload=1:x=970:y=968:fontsize=15:fontcolor=0x2ECC71" \
+      -c:v libx264 -preset medium -tune animation -b:v 2600k -maxrate 2800k -bufsize 5200k -pix_fmt yuv420p -g 60 -keyint_min 60 -r 30 \
       -c:a aac -b:a 192k -ar 48000 \
       -f flv \
       -flvflags no_duration_filesize \
