@@ -4,15 +4,14 @@ THIRI // 24/7 Interactive Lo-Fi Sanctuary Audio Generator Daemon
 Continuously monitors stream_state.json and synthesizes 4-bar audio chunks
 in real-time, streaming raw 16-bit 48kHz PCM directly into a named FIFO pipe.
 
-Lo-Fi Sanctuary Features:
-- Laid-back 78 BPM lo-fi hip hop groove with swing hi-hats and pillowy boom-bap drums.
-- Warm Rhodes / Electric Piano chord voicings with Drop-2 jazz voice leading.
-- Pure sine wave sub-bass (808 style) sitting deep in the 40-80 Hz pocket.
-- Continuous authentic vinyl crackle and dust bed at -22 dB.
-- 432 Hz crystal and Tibetan singing bowl harmonic chime triggers.
-- Dynamic ElevenLabs spoken voice affirmation queue with -12 dB sidechain ducking.
-- External Splice drum loop support (drop any WAV into /app/audio/drums/).
-- Seamless equal-power boundary crossfades for 100% click-free continuity.
+Lo-Fi Sanctuary Dual-Keyboard Architecture:
+- Left Channel: Natural Rhodes Mark I Electric Piano (tine attack, tonebar body, suitcase tremolo).
+- Right Channel: Detuned Vintage Felt/Upright Piano with tape wow, unison string chorus, and spatial reverb.
+- Center/Bottom: Pure sine sub-bass (808 style) sitting deep in the 40-75 Hz pocket.
+- Atmosphere: Continuous authentic vinyl crackle and dust bed at -22 dB.
+- Drums: Swung lo-fi boom-bap percussion + support for external Splice WAV loops.
+- Resonance: 432 Hz crystal and Tibetan singing bowl harmonic chime triggers.
+- Spoken Voice: ElevenLabs affirmation queue with automatic -12 dB sidechain ducking.
 """
 
 import os, sys, time, json, math, re, itertools, wave, glob
@@ -93,10 +92,9 @@ def parse_chord(c_str):
     return root, quality, intervals
 
 def solve_drop2(root, ivs, prev_voicing=None):
+    """Solves smooth mid-register Drop-2 jazz voicing for Left E-Piano."""
     base = [(root + iv) % 12 for iv in ivs]
-    # Octave 4 reference (MIDI 60 to 71)
     base_oct = sorted([60 + b for b in base])
-    # Drop-2: drop second note from the top down by 1 octave
     drop2 = sorted([base_oct[2] - 12, base_oct[0], base_oct[1], base_oct[3]])
     
     if prev_voicing is not None:
@@ -104,7 +102,6 @@ def solve_drop2(root, ivs, prev_voicing=None):
         best_v = drop2
         for oct_shift in [-12, 0, 12]:
             shifted = [p + oct_shift for p in drop2]
-            # Ensure within comfortable piano mid-range (MIDI 45 to 76)
             if any(p < 43 or p > 78 for p in shifted):
                 continue
             for perm in itertools.permutations(shifted):
@@ -115,11 +112,52 @@ def solve_drop2(root, ivs, prev_voicing=None):
         return best_v
     return drop2
 
+def solve_spread_voicing(root, ivs, prev_voicing=None):
+    """Solves open spread upper-extension voicing for Right Detuned Piano."""
+    base = [(root + iv) % 12 for iv in ivs]
+    # Shift up into upper octave (MIDI 62 to 80)
+    octave_notes = sorted([67 + b for b in base])
+    spread = sorted([octave_notes[0] - 5, octave_notes[1], octave_notes[2], octave_notes[3] + 2])
+    
+    if prev_voicing is not None:
+        best_diff = float('inf')
+        best_v = spread
+        for oct_shift in [-12, 0, 12]:
+            shifted = [p + oct_shift for p in spread]
+            if any(p < 55 or p > 84 for p in shifted):
+                continue
+            for perm in itertools.permutations(shifted):
+                diff = sum((perm[i] - prev_voicing[i])**2 for i in range(4))
+                if diff < best_diff:
+                    best_diff = diff
+                    best_v = list(perm)
+        return best_v
+    return spread
+
 def get_bass_midi(root):
-    # Deep sub-bass sitting between MIDI 36 (C2, 65 Hz) and MIDI 47 (B2)
     midi = 36 + (root % 12)
     if midi > 43: midi -= 12 # Keep in the deep 40-75 Hz sub pocket
     return midi
+
+def apply_spatial_reverb(sig, sr=48000):
+    """Applies a 6-tap spatial diffusion reverb tail in numpy."""
+    out_L = sig[:, 0].copy()
+    out_R = sig[:, 1].copy()
+    mono = (sig[:, 0] + sig[:, 1]) * 0.5
+    taps = [
+        (int(0.048 * sr), 0.40, -0.40),
+        (int(0.095 * sr), 0.34,  0.40),
+        (int(0.148 * sr), 0.28, -0.45),
+        (int(0.220 * sr), 0.22,  0.45),
+        (int(0.315 * sr), 0.17, -0.30),
+        (int(0.445 * sr), 0.13,  0.30),
+    ]
+    for d, g, pan in taps:
+        d_sig = np.roll(mono, d) * g
+        d_sig[:d] = 0
+        out_L += d_sig * (0.5 - pan * 0.5)
+        out_R += d_sig * (0.5 + pan * 0.5)
+    return np.column_stack([out_L, out_R])
 
 def read_wav_file(path, target_sr=48000):
     """Loads any WAV file and resamples to target_sr stereo float32."""
@@ -157,8 +195,8 @@ def read_wav_file(path, target_sr=48000):
         print(f"[WAV LOADER] Error reading {path}: {e}")
         return None
 
-def synth_4bar_chunk(chords_list, drum_mode='lofi', chaos=1.0, prev_voicing=None, trigger_bowl=False, bpm=90.0):
-    """Synthesizes a 4-bar lo-fi arrangement chunk with vinyl bed, keys, sine sub, and drums."""
+def synth_4bar_chunk(chords_list, drum_mode='lofi', chaos=1.0, prev_voicing_left=None, prev_voicing_right=None, trigger_bowl=False, bpm=90.0):
+    """Synthesizes a 4-bar chunk with Dual Pianos (Rhodes Left + Detuned Reverb Felt Right), sub bass, and drums."""
     beat_sec = 60.0 / bpm
     bar_sec = beat_sec * 4.0
     chunk_sec = 4 * bar_sec
@@ -178,21 +216,24 @@ def synth_4bar_chunk(chords_list, drum_mode='lofi', chaos=1.0, prev_voicing=None
     buf[:, 0] += (noise_L + dust) * 0.18
     buf[:, 1] += (noise_R + dust) * 0.18
     
-    # 2. Parse and solve voicings for the 4 bars
-    voicings = []
+    # 2. Parse and solve voicings for both keyboards
+    voicings_left = []
+    voicings_right = []
     roots = []
-    curr_v = prev_voicing
+    curr_vl = prev_voicing_left
+    curr_vr = prev_voicing_right
     for c_str in chords_list:
         r, q, ivs = parse_chord(c_str)
-        curr_v = solve_drop2(r, ivs, curr_v)
-        voicings.append(curr_v)
+        curr_vl = solve_drop2(r, ivs, curr_vl)
+        curr_vr = solve_spread_voicing(r, ivs, curr_vr)
+        voicings_left.append(curr_vl)
+        voicings_right.append(curr_vr)
         roots.append(get_bass_midi(r))
         
     # 3. Synthesize Pure Sine Sub-Bass (Deep 808 Pocket)
     for b_idx in range(4):
         f0 = mtof(roots[b_idx])
         t_bar = b_idx * bar_sec
-        # Lo-fi bass rhythm: beat 1 and beat 2.5
         hits = [(0.0, bar_sec * 0.62), (beat_sec * 2.5, bar_sec * 0.35)]
         for h_off, h_dur in hits:
             t_start = t_bar + h_off
@@ -201,15 +242,15 @@ def synth_4bar_chunk(chords_list, drum_mode='lofi', chaos=1.0, prev_voicing=None
             if n_samp <= 0: continue
             t = np.linspace(0, h_dur, n_samp, endpoint=False)
             env = (1.0 - np.exp(-t * 22.0)) * np.exp(-t * 1.8)
-            # Pure sine + soft 2nd harmonic for phone audibility
             sig = np.sin(2.0 * math.pi * f0 * t) + 0.18 * np.sin(4.0 * math.pi * f0 * t)
             sig = soft_clip(sig * 1.2) * env * 0.68
             buf[i_start:i_start+n_samp, 0] += sig
             buf[i_start:i_start+n_samp, 1] += sig
 
-    # 4. Synthesize Warm Rhodes / Electric Piano Chords (Gentle chorus & low-pass warmth)
+    # 4A. Left Keyboard: Natural Rhodes Mark I E-Piano (Panned Left: 72% L / 28% R)
+    rhodes_buf = np.zeros((chunk_samples, 2), dtype=np.float32)
     for b_idx in range(4):
-        v = voicings[b_idx]
+        v = voicings_left[b_idx]
         t_bar = b_idx * bar_sec
         i_bar = int(t_bar * SR)
         dur = bar_sec * 1.04
@@ -217,30 +258,65 @@ def synth_4bar_chunk(chords_list, drum_mode='lofi', chaos=1.0, prev_voicing=None
         if n_samp <= 0: continue
         t = np.linspace(0, dur, n_samp, endpoint=False)
         
-        # Soft Rhodes bell envelope
-        bell_env = np.exp(-t * 5.5) * 0.35
-        warm_env = np.exp(-t * 1.1) * 0.65
-        env = (1.0 - np.exp(-t * 50.0)) * (bell_env + warm_env)
+        # Rhodes envelope: crisp metallic tine strike (40ms) + tonebar sustain
+        tine_env = np.exp(-t * 30.0) * 0.38
+        bar_env = np.exp(-t * 1.25) * 0.62
+        env = (1.0 - np.exp(-t * 90.0)) * (tine_env + bar_env)
         
-        c_sig_L = np.zeros(n_samp, dtype=np.float32)
-        c_sig_R = np.zeros(n_samp, dtype=np.float32)
+        # Suitcase tremolo autopan (2.6 Hz, 12% depth)
+        tremolo = 1.0 + 0.12 * np.sin(2.0 * np.pi * 2.6 * t)
         
-        # Subtle analog vibrato / chorus LFO
-        lfo_L = np.sin(2.0 * math.pi * 4.2 * t) * (3.0 / 1200.0)
-        lfo_R = np.cos(2.0 * math.pi * 4.2 * t) * (3.0 / 1200.0)
-        
+        c_sig = np.zeros(n_samp, dtype=np.float32)
         for m in v:
             f = mtof(m)
-            # Soft bell FM structure: carrier + 2nd overtone decay
-            sig_L = (np.sin(2.0 * math.pi * f * (1.0 + lfo_L) * t) + 
-                     0.3 * np.sin(4.0 * math.pi * f * t) * np.exp(-t * 7.0))
-            sig_R = (np.sin(2.0 * math.pi * f * (1.0 + lfo_R) * t) + 
-                     0.3 * np.sin(4.0 * math.pi * f * t) * np.exp(-t * 7.0))
-            c_sig_L += sig_L * 0.22
-            c_sig_R += sig_R * 0.22
+            tine_ping = 0.25 * np.sin(2.0 * np.pi * (f * 3.82) * t) * np.exp(-t * 35.0)
+            body = (np.sin(2.0 * np.pi * f * t) + 
+                    0.35 * np.sin(4.0 * np.pi * f * t) * np.exp(-t * 3.0) +
+                    0.12 * np.sin(6.0 * np.pi * f * t) * np.exp(-t * 6.0))
+            c_sig += (body + tine_ping) * 0.22
             
-        buf[i_bar:i_bar+n_samp, 0] += c_sig_L * env * 0.75
-        buf[i_bar:i_bar+n_samp, 1] += c_sig_R * env * 0.75
+        c_sig = np.tanh(c_sig * 1.2) * env * tremolo
+        rhodes_buf[i_bar:i_bar+n_samp, 0] += c_sig * 0.72
+        rhodes_buf[i_bar:i_bar+n_samp, 1] += c_sig * 0.28
+
+    # 4B. Right Keyboard: Detuned Felt/Acoustic Piano with Reverb (Panned Right: 25% L / 75% R)
+    felt_raw = np.zeros((chunk_samples, 2), dtype=np.float32)
+    for b_idx in range(4):
+        v = voicings_right[b_idx]
+        t_bar = b_idx * bar_sec + 0.025 # 25ms humanized offset
+        i_bar = int(t_bar * SR)
+        dur = bar_sec * 1.02
+        n_samp = min(int(dur * SR), chunk_samples - i_bar)
+        if n_samp <= 0: continue
+        t = np.linspace(0, dur, n_samp, endpoint=False)
+        
+        # Soft felt hammer envelope + slow tape wow pitch drift
+        env = (1.0 - np.exp(-t * 20.0)) * (np.exp(-t * 1.7) * 0.7 + np.exp(-t * 0.4) * 0.3)
+        wow = np.sin(2.0 * np.pi * 0.65 * t) * (5.0 / 1200.0)
+        
+        c_sig = np.zeros(n_samp, dtype=np.float32)
+        for m in v:
+            f = mtof(m)
+            # 3 Unison strings detuned for natural nostalgic upright chorus
+            d1 = 2.0 ** ((-5.8 / 1200.0) + wow)
+            d2 = 2.0 ** ((6.4 / 1200.0) + wow)
+            d0 = 2.0 ** (wow)
+            s1 = np.sin(2.0 * np.pi * (f * d0) * t)
+            s2 = np.sin(2.0 * np.pi * (f * d1) * t) * 0.82
+            s3 = np.sin(2.0 * np.pi * (f * d2) * t) * 0.82
+            s_wood = 0.20 * np.sin(4.0 * np.pi * f * t) * np.exp(-t * 2.5)
+            c_sig += (s1 + s2 + s3 + s_wood) * 0.15
+            
+        c_sig = np.tanh(c_sig * 1.1) * env
+        felt_raw[i_bar:i_bar+n_samp, 0] += c_sig * 0.25
+        felt_raw[i_bar:i_bar+n_samp, 1] += c_sig * 0.75
+
+    # Apply 6-Tap Spatial Diffuse Reverb to Right Felt Piano
+    felt_rev = apply_spatial_reverb(felt_raw, sr=SR)
+    
+    # Mix both keyboards into master buffer
+    buf[:, 0] += rhodes_buf[:, 0] * 0.85 + felt_rev[:, 0] * 0.70
+    buf[:, 1] += rhodes_buf[:, 1] * 0.85 + felt_rev[:, 1] * 0.70
 
     # 5. Drums (Check for external Splice drum loop first, else synthesize lo-fi boom bap)
     external_loop = None
@@ -249,7 +325,6 @@ def synth_4bar_chunk(chords_list, drum_mode='lofi', chaos=1.0, prev_voicing=None
         external_loop = read_wav_file(loop_candidates[0], target_sr=SR)
         
     if external_loop is not None and drum_mode not in ('off', 'mute', 'cut'):
-        # Loop external drum sample seamlessly across chunk
         loop_len = len(external_loop)
         for offset in range(0, chunk_samples, loop_len):
             rem = min(loop_len, chunk_samples - offset)
@@ -336,11 +411,9 @@ def synth_4bar_chunk(chords_list, drum_mode='lofi', chaos=1.0, prev_voicing=None
             buf[:, 0] *= duck_env
             buf[:, 1] *= duck_env
             
-            # Mix voice at pristine clarity
             buf[:v_len, 0] += voice_audio[:v_len, 0] * 1.15
             buf[:v_len, 1] += voice_audio[:v_len, 1] * 1.15
             
-        # Clean up played voice file
         try: os.remove(active_voice_file)
         except: pass
 
@@ -349,7 +422,7 @@ def synth_4bar_chunk(chords_list, drum_mode='lofi', chaos=1.0, prev_voicing=None
     if peak > 0.95:
         buf = buf / peak * 0.95
         
-    return buf, voicings[-1]
+    return buf, voicings_left[-1], voicings_right[-1]
 
 def read_stream_state():
     try:
@@ -368,7 +441,7 @@ def update_live_overlay_files(cmd, author, chords, drums, bpm=90.0, mantra=None,
         cmd_text = f"PROMPT: {cmd}  [Steered by {clean_author}]"
         
     chords_text = f"CHORDS: {' -> '.join(chords)}  |  TEMPO: {int(bpm)} BPM (Lo-Fi)"
-    status_text = f"THIRI SANCTUARY: 432 Hz RESONANCE | VINYL CALM: ON | DRUMS: {drums.upper().replace('_', ' ')}"
+    status_text = f"THIRI SANCTUARY: DUAL PIANOS (RHODES L + DETUNED R) | 432 Hz RESONANCE"
     
     for path, content in [
         ('/tmp/thiri_live_cmd.txt', cmd_text),
@@ -383,7 +456,7 @@ def update_live_overlay_files(cmd, author, chords, drums, bpm=90.0, mantra=None,
 
 def main():
     print("=================================================================")
-    print("   THIRI // 24/7 LO-FI SANCTUARY & HARMONIC ENGINE STARTING")
+    print("   THIRI // 24/7 LO-FI SANCTUARY & DUAL-PIANO ENGINE STARTING")
     print("=================================================================")
     print(f"Sampling Rate:    {SR} Hz Stereo (16-bit PCM)")
     print(f"Tempo:            {BPM} BPM (4-bar chunks = {CHUNK_SEC:.4f}s / {CHUNK_SAMPLES} samples)")
@@ -403,7 +476,8 @@ def main():
     print("Consumer connected! Real-time lo-fi sanctuary active.\n")
 
     cycle_idx = 0
-    last_voicing = None
+    last_voicing_left = None
+    last_voicing_right = None
     prev_tail = np.zeros((int(0.015 * SR), 2), dtype=np.float32) # 15ms crossfade buffer
     fade_len = len(prev_tail)
 
@@ -420,7 +494,6 @@ def main():
         voice = state.get("active_voice")
         trigger_bowl = state.get("trigger_bowl", False)
         
-        # Reset one-shot bowl trigger in state
         if trigger_bowl:
             state["trigger_bowl"] = False
             try:
@@ -451,13 +524,14 @@ def main():
             voice=voice
         )
 
-        print(f"⚡ [LO-FI BARS ACTIVE] {source_desc} | Drums={drums} | Tempo={bpm} BPM")
+        print(f"⚡ [DUAL PIANO ACTIVE] {source_desc} | Drums={drums} | Tempo={bpm} BPM")
 
-        chunk_f32, last_voicing = synth_4bar_chunk(
+        chunk_f32, last_voicing_left, last_voicing_right = synth_4bar_chunk(
             chords_list=chords,
             drum_mode=drums,
             chaos=chaos,
-            prev_voicing=last_voicing,
+            prev_voicing_left=last_voicing_left,
+            prev_voicing_right=last_voicing_right,
             trigger_bowl=trigger_bowl,
             bpm=bpm
         )
