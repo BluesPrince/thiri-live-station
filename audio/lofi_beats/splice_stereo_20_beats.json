@@ -1,0 +1,342 @@
+[
+  {
+    "track_number": 1,
+    "id": "01",
+    "title": "Midnight Tape Keys & Jazz Ride",
+    "bpm": 80,
+    "key": "F minor",
+    "duration_seconds": 24.0,
+    "spatial_mix": {
+      "layer_1_drum_center": "OS_LFC2_90_Drum_Loop_12__Kick_Snare_.wav",
+      "layer_2_chordal_stereo": "CLF_80_Keys_TapePiano_Fm.wav",
+      "layer_3_high_perc_left": "SO_JC_80_top_loop_acoustic_ride_aqua.wav",
+      "layer_4_mid_perc_right": "SO_DR_80_perc_loop_bongo_emerald.wav"
+    },
+    "description": "Capsun vintage tape piano with Alita Moses jazz ride left and organic bongo groove right.",
+    "wav_file": "01_Midnight_Tape_Keys_and_Jazz_Ride.wav",
+    "mp3_file": "01_Midnight_Tape_Keys_and_Jazz_Ride.mp3"
+  },
+  {
+    "track_number": 2,
+    "id": "02",
+    "title": "Dark Cello Bongo Meditation",
+    "bpm": 80,
+    "key": "D minor",
+    "duration_seconds": 24.0,
+    "spatial_mix": {
+      "layer_1_drum_center": "SO_DR_85_drum_loop_almond_dry.wav",
+      "layer_2_chordal_stereo": "RS3_1_80_Dm_cellos_pad1.wav",
+      "layer_3_high_perc_left": "SO_DR_80_top_loop_lime.wav",
+      "layer_4_mid_perc_right": "SO_DR_80_perc_loop_timbale_fennel.wav"
+    },
+    "description": "Dark emotive cello pads anchored by crisp lime shaker left and fennel timbales right.",
+    "wav_file": "02_Dark_Cello_Bongo_Meditation.wav",
+    "mp3_file": "02_Dark_Cello_Bongo_Meditation.mp3"
+  },
+  {
+    "track_number": 3,
+    "id": "03",
+    "title": "Lucky Cat Rhodes & Lily Shaker",
+    "bpm": 80,
+    "key": "E minor",
+    "duration_seconds": 24.0,
+    "spatial_mix": {
+      "layer_1_drum_center": "SO_DR_85_drum_loop_cerulean.wav",
+      "layer_2_chordal_stereo": "RKU_RTJ3_80_electric_piano_loop_lucky_cat_Emin.wav",
+      "layer_3_high_perc_left": "SO_DR_80_top_loop_lily.wav",
+      "layer_4_mid_perc_right": "SO_DR_82_drum_loop_perc_azuki.wav"
+    },
+    "description": "Tape Jams 3 vintage Rhodes, delicate lily top loop left, and azuki wood perc right.",
+    "wav_file": "03_Lucky_Cat_Rhodes_and_Lily_Shaker.wav",
+    "mp3_file": "03_Lucky_Cat_Rhodes_and_Lily_Shaker.mp3"
+  },
+  {
+    "track_number": 4,
+    "id": "04",
+    "title": "Hammond Dub & Timbale Pocket",
+    "bpm": 80,
+    "key": "G minor",
+    "duration_seconds": 24.0,
+    "spatial_mix": {
+      "layer_1_drum_center": "SO_DR_85_drum_loop_chartreuse.wav",
+      "layer_2_chordal_stereo": "SO_DR_80_hammond_chords_bashment_Gmin.wav",
+      "layer_3_high_perc_left": "DD_DUB_81_drums_loop_dub_kit_tambourine_percussion4.wav",
+      "layer_4_mid_perc_right": "SO_DR_82_drum_loop_perc_azure.wav"
+    },
+    "description": "Deep Hammond organ chords, Horseman tambourines left, and azure percussion right.",
+    "wav_file": "04_Hammond_Dub_and_Timbale_Pocket.wav",
+    "mp3_file": "04_Hammond_Dub_and_Timbale_Pocket.mp3"
+  },
+  {
+    "track_number": 5,
+    "id": "05",
+    "title": "Babylon Wurli & Lychee Shaker",
+    "bpm": 82,
+    "key": "C major",
+    "duration_seconds": 23.41,
+    "spatial_mix": {
+      "layer_1_drum_center": "KAELIN_ELLIS_85_drum_loop_learned_from_the_best.wav",
+      "layer_2_chordal_stereo": "SO_DR_82_wurli_chords_babylon_Cmaj.wav",
+      "layer_3_high_perc_left": "SO_DR_82_top_loop_lychee.wav",
+      "layer_4_mid_perc_right": "MdL_82_percussion_loop_paperhearts.wav"
+    },
+    "description": "Kaelin Ellis punchy kick/snare center, warm Babylon Wurli, lychee shaker left, paperhearts perc right.",
+    "wav_file": "05_Babylon_Wurli_and_Lychee_Shaker.wav",
+    "mp3_file": "05_Babylon_Wurli_and_Lychee_Shaker.mp3"
+  },
+  {
+    "track_number": 6,
+    "id": "06",
+    "title": "Cielo Acoustic Pick & Traveler Perc",
+    "bpm": 82,
+    "key": "Eb major",
+    "duration_seconds": 23.41,
+    "spatial_mix": {
+      "layer_1_drum_center": "DD_DUB_87_drums_loop_dub_kete2.wav",
+      "layer_2_chordal_stereo": "OSS_TBK_82_GUITAR_LOOP_CIELO_ACOUSTIC_PICKED_Eb.wav",
+      "layer_3_high_perc_left": "SO_DR_82_top_loop_magenta.wav",
+      "layer_4_mid_perc_right": "MdL_84_percussion_loop_traveler.wav"
+    },
+    "description": "Lush picked acoustic guitar, magenta shaker left, and MdL traveler groove right.",
+    "wav_file": "06_Cielo_Acoustic_Pick_and_Traveler_Perc.wav",
+    "mp3_file": "06_Cielo_Acoustic_Pick_and_Traveler_Perc.mp3"
+  },
+  {
+    "track_number": 7,
+    "id": "07",
+    "title": "Babylon Horns & Dub Timbale",
+    "bpm": 82,
+    "key": "C major",
+    "duration_seconds": 23.41,
+    "spatial_mix": {
+      "layer_1_drum_center": "DD_DUB_87_drums_loop_dub_kit_timbale_kete.wav",
+      "layer_2_chordal_stereo": "SO_DR_82_horn_stack_babylon_melody_Cmaj.wav",
+      "layer_3_high_perc_left": "DD_DUB_81_drums_loop_dub_kit_tambourine_percussion_timbale2.wav",
+      "layer_4_mid_perc_right": "SO_DR_85_perc_loop_timbale_gold.wav"
+    },
+    "description": "Reggae/lo-fi brass stack in stereo, vintage tambourines left, gold timbales right.",
+    "wav_file": "07_Babylon_Horns_and_Dub_Timbale.wav",
+    "mp3_file": "07_Babylon_Horns_and_Dub_Timbale.mp3"
+  },
+  {
+    "track_number": 8,
+    "id": "08",
+    "title": "Shhh Electric Piano & Fuchsia Djembe",
+    "bpm": 85,
+    "key": "C minor",
+    "duration_seconds": 22.59,
+    "spatial_mix": {
+      "layer_1_drum_center": "SO_DR_85_drum_loop_alder_dry.wav",
+      "layer_2_chordal_stereo": "LEX_LFL_85_electric_piano_loop_shhh_Cm.wav",
+      "layer_3_high_perc_left": "SO_DR_85_top_loop_magnolia.wav",
+      "layer_4_mid_perc_right": "SO_DR_85_perc_loop_djembe_fuchsia.wav"
+    },
+    "description": "Lofi lullabies keys, magnolia shaker left, and fuchsia djembe knocks right.",
+    "wav_file": "08_Shhh_Electric_Piano_and_Fuchsia_Djembe.wav",
+    "mp3_file": "08_Shhh_Electric_Piano_and_Fuchsia_Djembe.mp3"
+  },
+  {
+    "track_number": 9,
+    "id": "09",
+    "title": "Kaelin Ellis Pocket & Ginger Djembe",
+    "bpm": 85,
+    "key": "G minor",
+    "duration_seconds": 22.59,
+    "spatial_mix": {
+      "layer_1_drum_center": "KAELIN_ELLIS_85_drum_loop_learned_from_the_best.wav",
+      "layer_2_chordal_stereo": "DIASPORA_classicriddims_melodic_loop_6_electric_guitar_rhythm_dancehall_80_bpm_Gmin.wav",
+      "layer_3_high_perc_left": "SO_DR_85_top_loop_mandarin.wav",
+      "layer_4_mid_perc_right": "SO_DR_85_perc_loop_djembe_ginger.wav"
+    },
+    "description": "Punchy modern hip-hop drums, classic electric guitar skank, mandarin top left, ginger djembe right.",
+    "wav_file": "09_Kaelin_Ellis_Pocket_and_Ginger_Djembe.wav",
+    "mp3_file": "09_Kaelin_Ellis_Pocket_and_Ginger_Djembe.mp3"
+  },
+  {
+    "track_number": 10,
+    "id": "10",
+    "title": "Babylon Rhythm Guitar & Bongo Fern",
+    "bpm": 85,
+    "key": "C major",
+    "duration_seconds": 22.59,
+    "spatial_mix": {
+      "layer_1_drum_center": "SO_DR_85_drum_loop_almond_dry.wav",
+      "layer_2_chordal_stereo": "SO_DR_82_guitar_rhythm_babylon_Cmaj.wav",
+      "layer_3_high_perc_left": "OSS_LS1_89_TOP_LOOP_ISLAND_NEVE.wav",
+      "layer_4_mid_perc_right": "SO_DR_85_perc_loop_bongo_fern.wav"
+    },
+    "description": "Warm C major guitar rhythm, Neve top loop left, and organic bongo fern right.",
+    "wav_file": "10_Babylon_Rhythm_Guitar_and_Bongo_Fern.wav",
+    "mp3_file": "10_Babylon_Rhythm_Guitar_and_Bongo_Fern.mp3"
+  },
+  {
+    "track_number": 11,
+    "id": "11",
+    "title": "Date Night Guitar & Horseman Dub Timbale",
+    "bpm": 87,
+    "key": "Ab minor",
+    "duration_seconds": 22.07,
+    "spatial_mix": {
+      "layer_1_drum_center": "DD_DUB_87_drums_loop_dub_kete2.wav",
+      "layer_2_chordal_stereo": "OSS_LS1_87_GUITAR_LOOP_DATENIGHT_ELECTRIC_STRUM_Abm.wav",
+      "layer_3_high_perc_left": "OSS_LS1_89_TOP_LOOP_ISLAND_RECALL.wav",
+      "layer_4_mid_perc_right": "DD_DUB_87_drums_loop_dub_kit_timbale_percussion1.wav"
+    },
+    "description": "Soulful electric guitar strums, Island Recall top left, Horseman timbales right.",
+    "wav_file": "11_Date_Night_Guitar_and_Horseman_Dub_Timbale.wav",
+    "mp3_file": "11_Date_Night_Guitar_and_Horseman_Dub_Timbale.mp3"
+  },
+  {
+    "track_number": 12,
+    "id": "12",
+    "title": "Vintage Jazzy Hop & Afroshake",
+    "bpm": 88,
+    "key": "G# minor",
+    "duration_seconds": 21.82,
+    "spatial_mix": {
+      "layer_1_drum_center": "VHB_88_Drum_Loop_Jazzy_1.wav",
+      "layer_2_chordal_stereo": "FL_MVA_I_Hate_It_Vocal_Loop_Male_Fx_Background_88_G#min.wav",
+      "layer_3_high_perc_left": "PMDK_hihat_loop_94_wah_do_dem.wav",
+      "layer_4_mid_perc_right": "KRS_88_percussion_loop_afroshake.wav"
+    },
+    "description": "Vintage 88 BPM hip-hop drums, ambient vocal chord wash, crisp hats left, afroshake perc right.",
+    "wav_file": "12_Vintage_Jazzy_Hop_and_Afroshake.wav",
+    "mp3_file": "12_Vintage_Jazzy_Hop_and_Afroshake.mp3"
+  },
+  {
+    "track_number": 13,
+    "id": "13",
+    "title": "Horseman Kete & Djembe Tape",
+    "bpm": 88,
+    "key": "A minor",
+    "duration_seconds": 21.82,
+    "spatial_mix": {
+      "layer_1_drum_center": "DD_DUB_88_drums_loop_dub_kit_kete2.wav",
+      "layer_2_chordal_stereo": "KRS_kit02_loop_dancehall_crown_pads_89_Amin.wav",
+      "layer_3_high_perc_left": "SO_JC_90_top_loop_acoustic_ride_aero.wav",
+      "layer_4_mid_perc_right": "SO_DR_85_perc_loop_djembe_tape.wav"
+    },
+    "description": "Acoustic ride aero left, authentic analog tape djembe right, surrounded by crown synth pads.",
+    "wav_file": "13_Horseman_Kete_and_Djembe_Tape.wav",
+    "mp3_file": "13_Horseman_Kete_and_Djembe_Tape.mp3"
+  },
+  {
+    "track_number": 14,
+    "id": "14",
+    "title": "Crown Pads & Bongo Fig",
+    "bpm": 89,
+    "key": "A minor",
+    "duration_seconds": 21.57,
+    "spatial_mix": {
+      "layer_1_drum_center": "DD_DUB_88_drums_loop_dub_kit_percussion3.wav",
+      "layer_2_chordal_stereo": "KRS_kit02_loop_dancehall_crown_pads_89_Amin.wav",
+      "layer_3_high_perc_left": "OSS_LS1_89_TOP_LOOP_ISLAND_NEVE.wav",
+      "layer_4_mid_perc_right": "SO_DR_85_perc_loop_bongo_fig.wav"
+    },
+    "description": "Hypnotic A minor pads, island top loop left, and deep bongo fig pattern right.",
+    "wav_file": "14_Crown_Pads_and_Bongo_Fig.wav",
+    "mp3_file": "14_Crown_Pads_and_Bongo_Fig.mp3"
+  },
+  {
+    "track_number": 15,
+    "id": "15",
+    "title": "Lo-Fi Cuts 2 & Matrix Keys",
+    "bpm": 90,
+    "key": "F minor",
+    "duration_seconds": 21.33,
+    "spatial_mix": {
+      "layer_1_drum_center": "OS_LFC2_90_Drum_Loop_12__Kick_Snare_.wav",
+      "layer_2_chordal_stereo": "CLF_90_Keys_Matrix_Fm.wav",
+      "layer_3_high_perc_left": "SS_SD_90_top_loop_lion.wav",
+      "layer_4_mid_perc_right": "DD_DUB_89_drums_loop_dub_kit_percussion2.wav"
+    },
+    "description": "Origin Sound Lo-Fi Cuts 2 punchy center kick/snare, Capsun Matrix keys, lion shaker left, dub perc right.",
+    "wav_file": "15_Lo-Fi_Cuts_2_and_Matrix_Keys.wav",
+    "mp3_file": "15_Lo-Fi_Cuts_2_and_Matrix_Keys.mp3"
+  },
+  {
+    "track_number": 16,
+    "id": "16",
+    "title": "Chestpuncher & Guillaume Muschalle Guitar",
+    "bpm": 90,
+    "key": "D minor",
+    "duration_seconds": 21.33,
+    "spatial_mix": {
+      "layer_1_drum_center": "KAELIN_ELLIS_90_drum_loop_chestpuncher.wav",
+      "layer_2_chordal_stereo": "SS_GM_90_Electric_Guitar_Loop_Lofi_Forrest_Rhythimc_Groove_Dmin.wav",
+      "layer_3_high_perc_left": "SO_LI_90_top_loop_sint_ti_leaning_filtered.wav",
+      "layer_4_mid_perc_right": "DD_DUB_89_drums_loop_dub_kit_percussion4.wav"
+    },
+    "description": "Kaelin Ellis heavy kick/snare center, jazz guitar musings, filtered top loop left, wood perc right.",
+    "wav_file": "16_Chestpuncher_and_Guillaume_Muschalle_Guitar.wav",
+    "mp3_file": "16_Chestpuncher_and_Guillaume_Muschalle_Guitar.mp3"
+  },
+  {
+    "track_number": 17,
+    "id": "17",
+    "title": "Lion Afro Dancehall & Flute",
+    "bpm": 90,
+    "key": "A minor",
+    "duration_seconds": 21.33,
+    "spatial_mix": {
+      "layer_1_drum_center": "SS_SD_90_drum_loop_lion.wav",
+      "layer_2_chordal_stereo": "SS_SD_90_flute_lion_melody_Amin.wav",
+      "layer_3_high_perc_left": "SSR_90_BPM_Top_Loop_49.wav",
+      "layer_4_mid_perc_right": "SS_SD_90_synth_lion_perc_Amin.wav"
+    },
+    "description": "Iss 814 live flute melody, reggaeton high shaker left, afro synth percussion right.",
+    "wav_file": "17_Lion_Afro_Dancehall_and_Flute.wav",
+    "mp3_file": "17_Lion_Afro_Dancehall_and_Flute.mp3"
+  },
+  {
+    "track_number": 18,
+    "id": "18",
+    "title": "La Isla Stripped & Prayer Keys",
+    "bpm": 90,
+    "key": "F# minor",
+    "duration_seconds": 21.33,
+    "spatial_mix": {
+      "layer_1_drum_center": "SO_LI_90_drum_loop_sint_ti_stripped.wav",
+      "layer_2_chordal_stereo": "CLF_90_LoFi_PrayerKeys_F#m.wav",
+      "layer_3_high_perc_left": "SO_HZ_90_songstarter_rider_Dmin.wav",
+      "layer_4_mid_perc_right": "OS_LFC2_90_Drum_Loop_9__Perc_Tops_.wav"
+    },
+    "description": "Capsun prayer keys, Sonoma rider top left, Lo-Fi Cuts 2 syncopated percussion right.",
+    "wav_file": "18_La_Isla_Stripped_and_Prayer_Keys.wav",
+    "mp3_file": "18_La_Isla_Stripped_and_Prayer_Keys.mp3"
+  },
+  {
+    "track_number": 19,
+    "id": "19",
+    "title": "Boom Bap Archives & Thumb Piano",
+    "bpm": 91,
+    "key": "G# minor",
+    "duration_seconds": 21.1,
+    "spatial_mix": {
+      "layer_1_drum_center": "BBA_Drum_Lp_91_5.wav",
+      "layer_2_chordal_stereo": "90BPM_G#minor_Spacious-Thumb-Piano-Loop.wav",
+      "layer_3_high_perc_left": "KRS_94_percussion_loop_hihat.wav",
+      "layer_4_mid_perc_right": "KRS_94_percussion_loop_rims.wav"
+    },
+    "description": "Authentic 91 BPM boom bap drums center, kalimba thumb piano, hi-hats left, rim clicks right.",
+    "wav_file": "19_Boom_Bap_Archives_and_Thumb_Piano.wav",
+    "mp3_file": "19_Boom_Bap_Archives_and_Thumb_Piano.mp3"
+  },
+  {
+    "track_number": 20,
+    "id": "20",
+    "title": "Screwed Up Rhodes & Swing Sticks",
+    "bpm": 95,
+    "key": "D major",
+    "duration_seconds": 20.21,
+    "spatial_mix": {
+      "layer_1_drum_center": "RT_Jazz_Drums_Jazz_Swing_Sticks_95_Loop_4_Drums_Andreas_Klein_95_loop.wav",
+      "layer_2_chordal_stereo": "95BPM_Dmajor_Screwed-Up-Rhodes-Loop.wav",
+      "layer_3_high_perc_left": "SO_HZ_95_hat_loop_babygangsta.wav",
+      "layer_4_mid_perc_right": "DD_DUB_88_drums_loop_dub_kit_percussion1.wav"
+    },
+    "description": "Andreas Klein acoustic jazz swing sticks center, lo-fi Rhodes, babygangsta hat left, dub perc right.",
+    "wav_file": "20_Screwed_Up_Rhodes_and_Swing_Sticks.wav",
+    "mp3_file": "20_Screwed_Up_Rhodes_and_Swing_Sticks.mp3"
+  }
+]
