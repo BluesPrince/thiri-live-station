@@ -1,18 +1,19 @@
 {
   "active_key": "C",
-  "tempo_bpm": 140.0,
-  "entropy_tau": 1.8,
-  "mode": "dubstep_drop",
-  "drums": "halftime_dubstep",
+  "tempo_bpm": 90.0,
+  "entropy_tau": 1.0,
+  "mode": "lofi_sanctuary",
+  "drums": "lofi",
   "custom_progression": [
-    "C-7",
-    "A7b9",
-    "D7#11",
-    "Gmaj7"
+    "Dm9",
+    "G13",
+    "Cmaj9",
+    "A7alt"
   ],
-  "last_command": "!prog C-7 | A7b9 | D7#11 | Gmaj7 + !drop (halftime dubstep) + !chaos 1.8",
+  "last_command": "!bpm 90",
   "commanded_by": "@BluesPrinceMedia",
-  "clam_rate": "0.0%",
-  "guide_tone_compliance": "100.0%",
-  "updated_at": 1791775995.722256
+  "active_mantra": "Peace within, clarity around",
+  "active_voice": "Rachel",
+  "trigger_bowl": false,
+  "updated_at": 1791776500.0
 }

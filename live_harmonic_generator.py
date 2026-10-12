@@ -27,11 +27,11 @@ os.makedirs(VOICE_QUEUE_DIR, exist_ok=True)
 os.makedirs(DRUM_LOOPS_DIR, exist_ok=True)
 
 SR = 48000
-BPM = 78.0
+BPM = 90.0
 BEAT_SEC = 60.0 / BPM
 BAR_SEC = BEAT_SEC * 4.0
 CHUNK_BARS = 4
-CHUNK_SEC = CHUNK_BARS * BAR_SEC # ~12.307 seconds per 4 bars
+CHUNK_SEC = CHUNK_BARS * BAR_SEC # ~10.667 seconds per 4 bars
 CHUNK_SAMPLES = int(round(CHUNK_SEC * SR))
 
 NOTE_NAMES = {
@@ -157,7 +157,7 @@ def read_wav_file(path, target_sr=48000):
         print(f"[WAV LOADER] Error reading {path}: {e}")
         return None
 
-def synth_4bar_chunk(chords_list, drum_mode='lofi', chaos=1.0, prev_voicing=None, trigger_bowl=False, bpm=78.0):
+def synth_4bar_chunk(chords_list, drum_mode='lofi', chaos=1.0, prev_voicing=None, trigger_bowl=False, bpm=90.0):
     """Synthesizes a 4-bar lo-fi arrangement chunk with vinyl bed, keys, sine sub, and drums."""
     beat_sec = 60.0 / bpm
     bar_sec = beat_sec * 4.0
@@ -360,7 +360,7 @@ def read_stream_state():
         pass
     return {}
 
-def update_live_overlay_files(cmd, author, chords, drums, bpm=78.0, mantra=None, voice=None):
+def update_live_overlay_files(cmd, author, chords, drums, bpm=90.0, mantra=None, voice=None):
     clean_author = author if author.startswith('@') else f"@{author}"
     if mantra:
         cmd_text = f"MANTRA: \"{mantra}\" [{voice or 'Rachel'}] (by {clean_author})"

@@ -49,7 +49,7 @@ def normalize_key(k_raw):
 def init_state():
     default_state = {
         "active_key": "C",
-        "tempo_bpm": 78.0,
+        "tempo_bpm": 90.0,
         "entropy_tau": 1.0,
         "mode": "lofi_sanctuary",
         "drums": "lofi",
