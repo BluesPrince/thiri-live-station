@@ -1,0 +1,18 @@
+{
+  "active_key": "C",
+  "tempo_bpm": 140.0,
+  "entropy_tau": 1.8,
+  "mode": "dubstep_drop",
+  "drums": "halftime_dubstep",
+  "custom_progression": [
+    "C-7",
+    "A7b9",
+    "D7#11",
+    "Gmaj7"
+  ],
+  "last_command": "!prog C-7 | A7b9 | D7#11 | Gmaj7 + !drop (halftime dubstep) + !chaos 1.8",
+  "commanded_by": "@BluesPrinceMedia",
+  "clam_rate": "0.0%",
+  "guide_tone_compliance": "100.0%",
+  "updated_at": 1791775995.722256
+}
