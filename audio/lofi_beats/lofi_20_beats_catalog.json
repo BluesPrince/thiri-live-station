@@ -1,0 +1,382 @@
+[
+  {
+    "id": 1,
+    "name": "01_Midnight_Jazz_Djembe",
+    "bpm": 90,
+    "key": "C Minor",
+    "style": "Soulful Jazz Lo-Fi with African Djembe Pocket",
+    "drum": "/Users/bluesprincemedia/Splice/sounds/packs/Lo-Fi Cuts 2 - Soulful Jazz Beats/Origin_Sound_-_Lo-Fi_Cuts_2/Drum_Loops/Kick_Snare/OS_LFC2_90_Drum_Loop_12__Kick_Snare_.wav",
+    "chord": "/Users/bluesprincemedia/vibe-studio/out/listening/cminor_lofi.engine.pad.wav",
+    "perc_high": "/Users/bluesprincemedia/Splice/sounds/packs/La Isla/Loops/Perc_Top/SO_LI_90_top_loop_sint_ti_leaning_filtered.wav",
+    "perc_mid": "/Users/bluesprincemedia/Splice/sounds/packs/Nairobi Rhythms/Black_Octopus_Sound_-_Nairobi_Rhythms_By_Digit_Music/Kit_Loops/123bpm_-_D_-_NyamaChoma/BOS_NR_123_Kit_Loop_NyamaChoma_Drums_Percussion.wav",
+    "gains": [
+      1.0,
+      0.85,
+      0.7,
+      0.8
+    ],
+    "rendered_wav": "/Users/bluesprincemedia/vibe-studio/out/lofi-20-beats/01_Midnight_Jazz_Djembe.wav",
+    "file_size_kb": 2756.3
+  },
+  {
+    "id": 2,
+    "name": "02_Island_Sunbeam_Djembe",
+    "bpm": 89,
+    "key": "C# Minor",
+    "style": "Island Ambient Downtempo with Organic Hand Percussion",
+    "drum": "/Users/bluesprincemedia/Splice/sounds/packs/La Isla/Loops/Drums_Grooves/SO_LI_90_drum_loop_sint_ti_stripped.wav",
+    "chord": "/Users/bluesprincemedia/vibe-studio/out/sa3-chord-lora/dataset/heldout/Cs-minor-fm-bloom-pad-pulse.wav",
+    "perc_high": "/Users/bluesprincemedia/Splice/sounds/packs/Loop Stash 01 by Krs./OSS_LOOP_STASH_01/DRUMS/PERCUSSION_LOOPS/TOP_LOOPS/OSS_LS1_89_TOP_LOOP_ISLAND_RECALL.wav",
+    "perc_mid": "/Users/bluesprincemedia/Splice/sounds/packs/Nairobi Rhythms/Black_Octopus_Sound_-_Nairobi_Rhythms_By_Digit_Music/Kit_Loops/123bpm_-_D_-_NyamaChoma/BOS_NR_123_Kit_Loop_NyamaChoma_Drums_Percussion.wav",
+    "gains": [
+      0.95,
+      0.8,
+      0.65,
+      0.75
+    ],
+    "rendered_wav": "/Users/bluesprincemedia/vibe-studio/out/lofi-20-beats/02_Island_Sunbeam_Djembe.wav",
+    "file_size_kb": 2787.3
+  },
+  {
+    "id": 3,
+    "name": "03_G_Blues_Meditation_Pocket",
+    "bpm": 92,
+    "key": "G Blues / C Minor 432Hz",
+    "style": "Deep Meditation Blues with Resonant Metabowls",
+    "drum": "/Users/bluesprincemedia/vibe-studio/out/g-blues-meditation-radio/stems/stem_splice_drums_body_92bpm.wav",
+    "chord": "/Users/bluesprincemedia/vibe-studio/out/listening/cminor_lofi_432.engine.pad.wav",
+    "perc_high": "/Users/bluesprincemedia/vibe-studio/out/g-blues-meditation-radio/stems/stem_splice_drums_top_92bpm.wav",
+    "perc_mid": "/Users/bluesprincemedia/Splice/sounds/packs/Nairobi Rhythms/Black_Octopus_Sound_-_Nairobi_Rhythms_By_Digit_Music/Kit_Loops/123bpm_-_A_-_Kibanda/BOS_NR_123_Kit_Loop_Kibanda_Drums_Metabowls.wav",
+    "gains": [
+      1.0,
+      0.85,
+      0.65,
+      0.7
+    ],
+    "rendered_wav": "/Users/bluesprincemedia/vibe-studio/out/lofi-20-beats/03_G_Blues_Meditation_Pocket.wav",
+    "file_size_kb": 2696.4
+  },
+  {
+    "id": 4,
+    "name": "04_Caribbean_Sunset_Chimes",
+    "bpm": 92,
+    "key": "C Major",
+    "style": "Caribbean Reggaeton/Lo-Fi Pocket with 432Hz Chimes",
+    "drum": "/Users/bluesprincemedia/Splice/sounds/packs/TEMPO By Krs. Vol.1/TEMPO_VOL.1_By_Krs/LOOPS/DRUM_LOOPS/CARIBBEAN/OSS_TBK_92_DRUM_LOOP_REGGAETON_DINERO.wav",
+    "chord": "/Users/bluesprincemedia/Splice/sounds/packs/Sonic Healing/Audio/Phrases/FF_SH_chime_melody_432_hz_bass_Cmaj.wav",
+    "perc_high": "/Users/bluesprincemedia/vibe-studio/out/g-blues-meditation-radio/stems/stem_splice_drums_top_92bpm.wav",
+    "perc_mid": "/Users/bluesprincemedia/vibe-studio/out/bb-minor-dubstep-blues-intro/export/stems/A08-Splice-dub-loop.wav",
+    "gains": [
+      1.0,
+      0.85,
+      0.65,
+      0.75
+    ],
+    "rendered_wav": "/Users/bluesprincemedia/vibe-studio/out/lofi-20-beats/04_Caribbean_Sunset_Chimes.wav",
+    "file_size_kb": 2696.4
+  },
+  {
+    "id": 5,
+    "name": "05_Neo_Soul_Rhodes_Nairobi",
+    "bpm": 90,
+    "key": "C4",
+    "style": "Classic Boom-Bap Rhodes with East African Hand Drums",
+    "drum": "/Users/bluesprincemedia/Splice/sounds/packs/Lo-Fi Cuts 2 - Soulful Jazz Beats/Origin_Sound_-_Lo-Fi_Cuts_2/Drum_Loops/Kick_Snare/OS_LFC2_90_Drum_Loop_12__Kick_Snare_.wav",
+    "chord": "/Users/bluesprincemedia/vibe-studio/out/fyllm-presentation/instruments/lofi-ep-C4chord.wav",
+    "perc_high": "/Users/bluesprincemedia/Splice/sounds/packs/La Isla/Loops/Perc_Top/SO_LI_90_top_loop_sint_ti_leaning_filtered.wav",
+    "perc_mid": "/Users/bluesprincemedia/Splice/sounds/packs/Nairobi Rhythms/Black_Octopus_Sound_-_Nairobi_Rhythms_By_Digit_Music/Kit_Loops/123bpm_-_E_-_Nairobi/BOS_NR_123_Kit_Loop_Nairobi_Drums_Percussion.wav",
+    "gains": [
+      1.0,
+      0.8,
+      0.7,
+      0.75
+    ],
+    "rendered_wav": "/Users/bluesprincemedia/vibe-studio/out/lofi-20-beats/05_Neo_Soul_Rhodes_Nairobi.wav",
+    "file_size_kb": 2756.3
+  },
+  {
+    "id": 6,
+    "name": "06_Dancehall_Chillout_Shaker",
+    "bpm": 94,
+    "key": "Eb Minor",
+    "style": "Laid-back Dancehall Tempo with Woodblocks & FM Rhodes",
+    "drum": "/Users/bluesprincemedia/vibe-studio/out/g-blues-meditation-radio/stems/stem_splice_drums_full_92bpm.wav",
+    "chord": "/Users/bluesprincemedia/vibe-studio/out/sa3-chord-lora/dataset/heldout/Eb-minor-fm-keys-comp-held.wav",
+    "perc_high": "/Users/bluesprincemedia/Splice/sounds/packs/Dancehall Kingdom/Audio/LOOPS/Drum_&_Percussion_Loops/Hihat_Loops/PMDK_hihat_loop_94_wah_do_dem.wav",
+    "perc_mid": "/Users/bluesprincemedia/Splice/sounds/packs/King Doudou Worldwide Radio Vol. 1 Sample Pack/KING_DOUDOU_sample_pack/KING_DOUDOU_drums/KING_DOUDOU_drum_loops/KING_DOUDOU_percussion_loops/KING_DOUDOU_percussion_loop_baile_funk_nitro.wav",
+    "gains": [
+      0.95,
+      0.85,
+      0.75,
+      0.7
+    ],
+    "rendered_wav": "/Users/bluesprincemedia/vibe-studio/out/lofi-20-beats/06_Dancehall_Chillout_Shaker.wav",
+    "file_size_kb": 2639.0
+  },
+  {
+    "id": 7,
+    "name": "07_Sonoma_Haze_Djembe_Jazz",
+    "bpm": 95,
+    "key": "F# Minor",
+    "style": "West Coast Mellow Swing with African Percussion",
+    "drum": "/Users/bluesprincemedia/Splice/sounds/packs/La Isla/Loops/Drums_Grooves/SO_LI_90_drum_loop_sint_ti_stripped.wav",
+    "chord": "/Users/bluesprincemedia/vibe-studio/out/sa3-chord-lora/dataset/heldout/Fs-minor-fm-keys-comp-pulse.wav",
+    "perc_high": "/Users/bluesprincemedia/Splice/sounds/packs/Sonoma Haze/Loops/Rhythm_Loops/Hat/SO_HZ_95_hat_loop_babygangsta.wav",
+    "perc_mid": "/Users/bluesprincemedia/Splice/sounds/packs/Nairobi Rhythms/Black_Octopus_Sound_-_Nairobi_Rhythms_By_Digit_Music/Kit_Loops/123bpm_-_D_-_NyamaChoma/BOS_NR_123_Kit_Loop_NyamaChoma_Drums_Percussion.wav",
+    "gains": [
+      1.0,
+      0.85,
+      0.7,
+      0.8
+    ],
+    "rendered_wav": "/Users/bluesprincemedia/vibe-studio/out/lofi-20-beats/07_Sonoma_Haze_Djembe_Jazz.wav",
+    "file_size_kb": 2611.2
+  },
+  {
+    "id": 8,
+    "name": "08_E_Minor_432_Chime_Drift",
+    "bpm": 90,
+    "key": "E Minor",
+    "style": "432Hz Sound Healing Bells with Deep Kick/Snare & Bowls",
+    "drum": "/Users/bluesprincemedia/vibe-studio/out/samples/sa3-hf-2026-10-10/4-loop-4bars-90bpm.wav",
+    "chord": "/Users/bluesprincemedia/Splice/sounds/packs/Sonic Healing/Audio/Phrases/FF_SH_chime_melody_432_hz_bass_Emin.wav",
+    "perc_high": "/Users/bluesprincemedia/Splice/sounds/packs/La Isla/Loops/Perc_Top/SO_LI_90_top_loop_sint_ti_leaning_filtered.wav",
+    "perc_mid": "/Users/bluesprincemedia/Splice/sounds/packs/Nairobi Rhythms/Black_Octopus_Sound_-_Nairobi_Rhythms_By_Digit_Music/Kit_Loops/123bpm_-_A_-_Kibanda/BOS_NR_123_Kit_Loop_Kibanda_Drums_Metabowls.wav",
+    "gains": [
+      0.95,
+      0.85,
+      0.65,
+      0.75
+    ],
+    "rendered_wav": "/Users/bluesprincemedia/vibe-studio/out/lofi-20-beats/08_E_Minor_432_Chime_Drift.wav",
+    "file_size_kb": 2756.3
+  },
+  {
+    "id": 9,
+    "name": "09_B_Minor_Late_Night_BoomBap",
+    "bpm": 90,
+    "key": "B Minor",
+    "style": "Dusty Midnight Jazz Keys with Organic Dub Congas",
+    "drum": "/Users/bluesprincemedia/Splice/sounds/packs/Lo-Fi Cuts 2 - Soulful Jazz Beats/Origin_Sound_-_Lo-Fi_Cuts_2/Drum_Loops/Kick_Snare/OS_LFC2_90_Drum_Loop_12__Kick_Snare_.wav",
+    "chord": "/Users/bluesprincemedia/vibe-studio/out/sa3-chord-lora/dataset/heldout/B-minor-fm-keys-comp-pulse.wav",
+    "perc_high": "/Users/bluesprincemedia/Splice/sounds/packs/Loop Stash 01 by Krs./OSS_LOOP_STASH_01/DRUMS/PERCUSSION_LOOPS/TOP_LOOPS/OSS_LS1_89_TOP_LOOP_ISLAND_RECALL.wav",
+    "perc_mid": "/Users/bluesprincemedia/vibe-studio/out/bb-minor-dubstep-blues-intro/export/stems/A08-Splice-dub-loop.wav",
+    "gains": [
+      1.0,
+      0.85,
+      0.7,
+      0.75
+    ],
+    "rendered_wav": "/Users/bluesprincemedia/vibe-studio/out/lofi-20-beats/09_B_Minor_Late_Night_BoomBap.wav",
+    "file_size_kb": 2756.3
+  },
+  {
+    "id": 10,
+    "name": "10_Cs_Major_Sunrise_Bloom",
+    "bpm": 92,
+    "key": "C# Major",
+    "style": "Lush Morning Warmth with African Djembe & Smooth Body",
+    "drum": "/Users/bluesprincemedia/vibe-studio/out/g-blues-meditation-radio/stems/stem_splice_drums_body_92bpm.wav",
+    "chord": "/Users/bluesprincemedia/vibe-studio/out/sa3-chord-lora/dataset/heldout/Cs-major-fm-bloom-pad-pulse.wav",
+    "perc_high": "/Users/bluesprincemedia/vibe-studio/out/g-blues-meditation-radio/stems/stem_splice_drums_top_92bpm.wav",
+    "perc_mid": "/Users/bluesprincemedia/Splice/sounds/packs/Nairobi Rhythms/Black_Octopus_Sound_-_Nairobi_Rhythms_By_Digit_Music/Kit_Loops/123bpm_-_D_-_NyamaChoma/BOS_NR_123_Kit_Loop_NyamaChoma_Drums_Percussion.wav",
+    "gains": [
+      1.0,
+      0.85,
+      0.65,
+      0.8
+    ],
+    "rendered_wav": "/Users/bluesprincemedia/vibe-studio/out/lofi-20-beats/10_Cs_Major_Sunrise_Bloom.wav",
+    "file_size_kb": 2696.4
+  },
+  {
+    "id": 11,
+    "name": "11_Fs_Major_Analog_Pluck_Groove",
+    "bpm": 90,
+    "key": "F# Major",
+    "style": "Analog Plucked Guitar Chords with Woodblock & Shaker",
+    "drum": "/Users/bluesprincemedia/vibe-studio/out/samples/sa3-hf-2026-10-10/4-loop-4bars-90bpm.wav",
+    "chord": "/Users/bluesprincemedia/vibe-studio/out/sa3-chord-lora/dataset/heldout/Fs-major-analog-zdf-pluck-pulse.wav",
+    "perc_high": "/Users/bluesprincemedia/Splice/sounds/packs/La Isla/Loops/Perc_Top/SO_LI_90_top_loop_sint_ti_leaning_filtered.wav",
+    "perc_mid": "/Users/bluesprincemedia/Splice/sounds/packs/King Doudou Worldwide Radio Vol. 1 Sample Pack/KING_DOUDOU_sample_pack/KING_DOUDOU_drums/KING_DOUDOU_drum_loops/KING_DOUDOU_percussion_loops/KING_DOUDOU_percussion_loop_baile_funk_nitro.wav",
+    "gains": [
+      0.95,
+      0.85,
+      0.7,
+      0.75
+    ],
+    "rendered_wav": "/Users/bluesprincemedia/vibe-studio/out/lofi-20-beats/11_Fs_Major_Analog_Pluck_Groove.wav",
+    "file_size_kb": 2756.3
+  },
+  {
+    "id": 12,
+    "name": "12_Spectral_Rhodes_Metabowls",
+    "bpm": 92,
+    "key": "C Minor",
+    "style": "Spectral Harmonic Chords with Resonant Bowls & Reggaeton Kick",
+    "drum": "/Users/bluesprincemedia/Splice/sounds/packs/TEMPO By Krs. Vol.1/TEMPO_VOL.1_By_Krs/LOOPS/DRUM_LOOPS/CARIBBEAN/OSS_TBK_92_DRUM_LOOP_REGGAETON_DINERO.wav",
+    "chord": "/Users/bluesprincemedia/vibe-studio/out/listening/cminor_lofi_spectral.engine.pad.wav",
+    "perc_high": "/Users/bluesprincemedia/vibe-studio/out/g-blues-meditation-radio/stems/stem_splice_drums_top_92bpm.wav",
+    "perc_mid": "/Users/bluesprincemedia/Splice/sounds/packs/Nairobi Rhythms/Black_Octopus_Sound_-_Nairobi_Rhythms_By_Digit_Music/Kit_Loops/123bpm_-_A_-_Kibanda/BOS_NR_123_Kit_Loop_Kibanda_Drums_Metabowls.wav",
+    "gains": [
+      1.0,
+      0.8,
+      0.65,
+      0.7
+    ],
+    "rendered_wav": "/Users/bluesprincemedia/vibe-studio/out/lofi-20-beats/12_Spectral_Rhodes_Metabowls.wav",
+    "file_size_kb": 2696.4
+  },
+  {
+    "id": 13,
+    "name": "13_Dub_Reggae_Djembe_Hop",
+    "bpm": 88,
+    "key": "C Minor",
+    "style": "Downtempo Dub Hop with Hand Drumming and Analog Pad",
+    "drum": "/Users/bluesprincemedia/Splice/sounds/packs/La Isla/Loops/Drums_Grooves/SO_LI_90_drum_loop_sint_ti_stripped.wav",
+    "chord": "/Users/bluesprincemedia/vibe-studio/out/listening/cminor_lofi.engine.pad.wav",
+    "perc_high": "/Users/bluesprincemedia/Splice/sounds/packs/Loop Stash 01 by Krs./OSS_LOOP_STASH_01/DRUMS/PERCUSSION_LOOPS/TOP_LOOPS/OSS_LS1_89_TOP_LOOP_ISLAND_RECALL.wav",
+    "perc_mid": "/Users/bluesprincemedia/vibe-studio/out/bb-minor-dubstep-blues-intro/export/stems/A08-Splice-dub-loop.wav",
+    "gains": [
+      0.95,
+      0.85,
+      0.7,
+      0.75
+    ],
+    "rendered_wav": "/Users/bluesprincemedia/vibe-studio/out/lofi-20-beats/13_Dub_Reggae_Djembe_Hop.wav",
+    "file_size_kb": 2818.9
+  },
+  {
+    "id": 14,
+    "name": "14_Njembe_EP_Vintage_Chords",
+    "bpm": 90,
+    "key": "C4",
+    "style": "Pure Neo-Soul Rhodes with Grass Shakers & Djembe",
+    "drum": "/Users/bluesprincemedia/vibe-studio/out/samples/sa3-hf-2026-10-10/4-loop-4bars-90bpm.wav",
+    "chord": "/Users/bluesprincemedia/vibe-studio/out/fyllm-presentation/instruments/lofi-ep-C4chord.wav",
+    "perc_high": "/Users/bluesprincemedia/Splice/sounds/packs/Nairobi Rhythms/Black_Octopus_Sound_-_Nairobi_Rhythms_By_Digit_Music/Kit_Loops/123bpm_-_D_-_NyamaChoma/BOS_NR_123_Kit_Loop_NyamaChoma_Drums_Shakers.wav",
+    "perc_mid": "/Users/bluesprincemedia/Splice/sounds/packs/Nairobi Rhythms/Black_Octopus_Sound_-_Nairobi_Rhythms_By_Digit_Music/Kit_Loops/123bpm_-_D_-_NyamaChoma/BOS_NR_123_Kit_Loop_NyamaChoma_Drums_Percussion.wav",
+    "gains": [
+      0.95,
+      0.85,
+      0.65,
+      0.8
+    ],
+    "rendered_wav": "/Users/bluesprincemedia/vibe-studio/out/lofi-20-beats/14_Njembe_EP_Vintage_Chords.wav",
+    "file_size_kb": 2756.3
+  },
+  {
+    "id": 15,
+    "name": "15_Tropical_LoFi_Dancehall",
+    "bpm": 94,
+    "key": "C# Minor",
+    "style": "Breezy Caribbean Lo-Fi with Hi-Hats and Nairobi Percussion",
+    "drum": "/Users/bluesprincemedia/vibe-studio/out/g-blues-meditation-radio/stems/stem_splice_drums_full_92bpm.wav",
+    "chord": "/Users/bluesprincemedia/vibe-studio/out/sa3-chord-lora/dataset/heldout/Cs-minor-fm-bloom-pad-pulse.wav",
+    "perc_high": "/Users/bluesprincemedia/Splice/sounds/packs/Dancehall Kingdom/Audio/LOOPS/Drum_&_Percussion_Loops/Hihat_Loops/PMDK_hihat_loop_94_wah_do_dem.wav",
+    "perc_mid": "/Users/bluesprincemedia/Splice/sounds/packs/Nairobi Rhythms/Black_Octopus_Sound_-_Nairobi_Rhythms_By_Digit_Music/Kit_Loops/123bpm_-_E_-_Nairobi/BOS_NR_123_Kit_Loop_Nairobi_Drums_Percussion.wav",
+    "gains": [
+      0.95,
+      0.85,
+      0.7,
+      0.75
+    ],
+    "rendered_wav": "/Users/bluesprincemedia/vibe-studio/out/lofi-20-beats/15_Tropical_LoFi_Dancehall.wav",
+    "file_size_kb": 2639.0
+  },
+  {
+    "id": 16,
+    "name": "16_Rainy_Day_432_Metabowls",
+    "bpm": 90,
+    "key": "C Minor",
+    "style": "Rainy Window Coffee Shop Lo-Fi with 432Hz Keys & Bowls",
+    "drum": "/Users/bluesprincemedia/Splice/sounds/packs/Lo-Fi Cuts 2 - Soulful Jazz Beats/Origin_Sound_-_Lo-Fi_Cuts_2/Drum_Loops/Kick_Snare/OS_LFC2_90_Drum_Loop_12__Kick_Snare_.wav",
+    "chord": "/Users/bluesprincemedia/vibe-studio/out/listening/cminor_lofi_432.engine.pad.wav",
+    "perc_high": "/Users/bluesprincemedia/Splice/sounds/packs/Nairobi Rhythms/Black_Octopus_Sound_-_Nairobi_Rhythms_By_Digit_Music/Kit_Loops/123bpm_-_A_-_Kibanda/BOS_NR_123_Kit_Loop_Kibanda_Drums_Shakers.wav",
+    "perc_mid": "/Users/bluesprincemedia/Splice/sounds/packs/Nairobi Rhythms/Black_Octopus_Sound_-_Nairobi_Rhythms_By_Digit_Music/Kit_Loops/123bpm_-_A_-_Kibanda/BOS_NR_123_Kit_Loop_Kibanda_Drums_Metabowls.wav",
+    "gains": [
+      1.0,
+      0.85,
+      0.65,
+      0.7
+    ],
+    "rendered_wav": "/Users/bluesprincemedia/vibe-studio/out/lofi-20-beats/16_Rainy_Day_432_Metabowls.wav",
+    "file_size_kb": 2756.3
+  },
+  {
+    "id": 17,
+    "name": "17_Island_Recall_Fs_Minor",
+    "bpm": 89,
+    "key": "F# Minor",
+    "style": "Downtempo Island Soul with Dub Percussion and Rhodes",
+    "drum": "/Users/bluesprincemedia/Splice/sounds/packs/La Isla/Loops/Drums_Grooves/SO_LI_90_drum_loop_sint_ti_stripped.wav",
+    "chord": "/Users/bluesprincemedia/vibe-studio/out/sa3-chord-lora/dataset/heldout/Fs-minor-fm-keys-comp-pulse.wav",
+    "perc_high": "/Users/bluesprincemedia/Splice/sounds/packs/Loop Stash 01 by Krs./OSS_LOOP_STASH_01/DRUMS/PERCUSSION_LOOPS/TOP_LOOPS/OSS_LS1_89_TOP_LOOP_ISLAND_RECALL.wav",
+    "perc_mid": "/Users/bluesprincemedia/vibe-studio/out/bb-minor-dubstep-blues-intro/export/stems/A08-Splice-dub-loop.wav",
+    "gains": [
+      0.95,
+      0.85,
+      0.7,
+      0.75
+    ],
+    "rendered_wav": "/Users/bluesprincemedia/vibe-studio/out/lofi-20-beats/17_Island_Recall_Fs_Minor.wav",
+    "file_size_kb": 2787.3
+  },
+  {
+    "id": 18,
+    "name": "18_Deep_Theta_Djembe_Chimes",
+    "bpm": 92,
+    "key": "C Major",
+    "style": "Deep Theta Ambient Healing with 92 BPM Kick/Snare & Djembe",
+    "drum": "/Users/bluesprincemedia/vibe-studio/out/g-blues-meditation-radio/stems/stem_splice_drums_body_92bpm.wav",
+    "chord": "/Users/bluesprincemedia/Splice/sounds/packs/Sonic Healing/Audio/Phrases/FF_SH_chime_melody_432_hz_bass_Cmaj.wav",
+    "perc_high": "/Users/bluesprincemedia/vibe-studio/out/g-blues-meditation-radio/stems/stem_splice_drums_top_92bpm.wav",
+    "perc_mid": "/Users/bluesprincemedia/Splice/sounds/packs/Nairobi Rhythms/Black_Octopus_Sound_-_Nairobi_Rhythms_By_Digit_Music/Kit_Loops/123bpm_-_D_-_NyamaChoma/BOS_NR_123_Kit_Loop_NyamaChoma_Drums_Percussion.wav",
+    "gains": [
+      1.0,
+      0.85,
+      0.65,
+      0.8
+    ],
+    "rendered_wav": "/Users/bluesprincemedia/vibe-studio/out/lofi-20-beats/18_Deep_Theta_Djembe_Chimes.wav",
+    "file_size_kb": 2696.4
+  },
+  {
+    "id": 19,
+    "name": "19_Afro_Caribbean_LoFi_Fusion",
+    "bpm": 92,
+    "key": "Eb Minor",
+    "style": "Cross-Cultural Afro-Caribbean Lo-Fi with Woodblock & Shaker",
+    "drum": "/Users/bluesprincemedia/Splice/sounds/packs/TEMPO By Krs. Vol.1/TEMPO_VOL.1_By_Krs/LOOPS/DRUM_LOOPS/CARIBBEAN/OSS_TBK_92_DRUM_LOOP_REGGAETON_DINERO.wav",
+    "chord": "/Users/bluesprincemedia/vibe-studio/out/sa3-chord-lora/dataset/heldout/Eb-minor-fm-keys-comp-held.wav",
+    "perc_high": "/Users/bluesprincemedia/Splice/sounds/packs/Nairobi Rhythms/Black_Octopus_Sound_-_Nairobi_Rhythms_By_Digit_Music/Kit_Loops/123bpm_-_D_-_NyamaChoma/BOS_NR_123_Kit_Loop_NyamaChoma_Drums_Shakers.wav",
+    "perc_mid": "/Users/bluesprincemedia/Splice/sounds/packs/King Doudou Worldwide Radio Vol. 1 Sample Pack/KING_DOUDOU_sample_pack/KING_DOUDOU_drums/KING_DOUDOU_drum_loops/KING_DOUDOU_percussion_loops/KING_DOUDOU_percussion_loop_baile_funk_nitro.wav",
+    "gains": [
+      1.0,
+      0.85,
+      0.65,
+      0.7
+    ],
+    "rendered_wav": "/Users/bluesprincemedia/vibe-studio/out/lofi-20-beats/19_Afro_Caribbean_LoFi_Fusion.wav",
+    "file_size_kb": 2696.4
+  },
+  {
+    "id": 20,
+    "name": "20_Grand_4Layer_Master_Beat",
+    "bpm": 90,
+    "key": "B Minor",
+    "style": "The Quintessential 4-Layer Lo-Fi Boom-Bap Groove",
+    "drum": "/Users/bluesprincemedia/Splice/sounds/packs/Lo-Fi Cuts 2 - Soulful Jazz Beats/Origin_Sound_-_Lo-Fi_Cuts_2/Drum_Loops/Kick_Snare/OS_LFC2_90_Drum_Loop_12__Kick_Snare_.wav",
+    "chord": "/Users/bluesprincemedia/vibe-studio/out/sa3-chord-lora/dataset/heldout/B-minor-fm-keys-comp-pulse.wav",
+    "perc_high": "/Users/bluesprincemedia/Splice/sounds/packs/La Isla/Loops/Perc_Top/SO_LI_90_top_loop_sint_ti_leaning_filtered.wav",
+    "perc_mid": "/Users/bluesprincemedia/Splice/sounds/packs/Nairobi Rhythms/Black_Octopus_Sound_-_Nairobi_Rhythms_By_Digit_Music/Kit_Loops/123bpm_-_D_-_NyamaChoma/BOS_NR_123_Kit_Loop_NyamaChoma_Drums_Percussion.wav",
+    "gains": [
+      1.0,
+      0.9,
+      0.7,
+      0.8
+    ],
+    "rendered_wav": "/Users/bluesprincemedia/vibe-studio/out/lofi-20-beats/20_Grand_4Layer_Master_Beat.wav",
+    "file_size_kb": 2756.3
+  }
+]

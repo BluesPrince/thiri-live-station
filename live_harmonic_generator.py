@@ -22,8 +22,40 @@ STATE_FILE = os.path.join(HERE, 'stream_state.json')
 FIFO_PATH = '/tmp/thiri_live_audio.fifo'
 VOICE_QUEUE_DIR = '/tmp/thiri_voice_queue'
 DRUM_LOOPS_DIR = os.path.join(HERE, 'audio', 'drums')
+LOFI_BEATS_DIR = os.path.join(HERE, 'audio', 'lofi_beats')
+CATALOG_FILE = os.path.join(LOFI_BEATS_DIR, 'lofi_20_beats_catalog.json')
+BEAT_CACHE = {}
 os.makedirs(VOICE_QUEUE_DIR, exist_ok=True)
 os.makedirs(DRUM_LOOPS_DIR, exist_ok=True)
+os.makedirs(LOFI_BEATS_DIR, exist_ok=True)
+
+def get_beat_audio(beat_id):
+    if not beat_id:
+        return None
+    if beat_id in BEAT_CACHE:
+        return BEAT_CACHE[beat_id]
+    
+    candidates = sorted(glob.glob(os.path.join(LOFI_BEATS_DIR, '*.wav')))
+    target = None
+    try:
+        idx = int(beat_id)
+        if 1 <= idx <= len(candidates):
+            target = candidates[idx - 1]
+    except (ValueError, TypeError):
+        pass
+
+    if target is None:
+        for c in candidates:
+            if str(beat_id).lower() in os.path.basename(c).lower():
+                target = c
+                break
+
+    if target and os.path.exists(target):
+        audio = read_wav_file(target, target_sr=SR)
+        if audio is not None:
+            BEAT_CACHE[beat_id] = audio
+            return audio
+    return None
 
 SR = 48000
 BPM = 90.0
@@ -190,39 +222,45 @@ def read_wav_file(path, target_sr=48000):
     if not os.path.exists(path):
         return None
     try:
-        with wave.open(path, 'rb') as wf:
-            n_ch = wf.getnchannels()
-            sampwidth = wf.getsampwidth()
-            framerate = wf.getframerate()
-            n_frames = wf.getnframes()
-            raw = wf.readframes(n_frames)
-            
-            if sampwidth == 2:
-                data = np.frombuffer(raw, dtype=np.int16).astype(np.float32) / 32767.0
-            elif sampwidth == 4:
-                data = np.frombuffer(raw, dtype=np.float32)
-            else:
-                return None
-                
-            if n_ch == 1:
+        try:
+            import soundfile as sf
+            data, framerate = sf.read(path, dtype='float32')
+            if data.ndim == 1:
                 data = np.column_stack([data, data])
-            else:
-                data = data.reshape(-1, 2)
-                
-            if framerate != target_sr:
-                orig_len = len(data)
-                new_len = int(round(orig_len * (target_sr / framerate)))
-                resampled = np.zeros((new_len, 2), dtype=np.float32)
-                resampled[:, 0] = np.interp(np.linspace(0, orig_len, new_len, endpoint=False), np.arange(orig_len), data[:, 0])
-                resampled[:, 1] = np.interp(np.linspace(0, orig_len, new_len, endpoint=False), np.arange(orig_len), data[:, 1])
-                return resampled
-            return data
+            elif data.shape[1] > 2:
+                data = data[:, :2]
+        except Exception:
+            with wave.open(path, 'rb') as wf:
+                n_ch = wf.getnchannels()
+                sampwidth = wf.getsampwidth()
+                framerate = wf.getframerate()
+                n_frames = wf.getnframes()
+                raw = wf.readframes(n_frames)
+                if sampwidth == 2:
+                    data = np.frombuffer(raw, dtype=np.int16).astype(np.float32) / 32767.0
+                elif sampwidth == 4:
+                    data = np.frombuffer(raw, dtype=np.float32)
+                else:
+                    return None
+                if n_ch == 1:
+                    data = np.column_stack([data, data])
+                else:
+                    data = data.reshape(-1, 2)
+                    
+        if framerate != target_sr:
+            orig_len = len(data)
+            new_len = int(round(orig_len * (target_sr / framerate)))
+            resampled = np.zeros((new_len, 2), dtype=np.float32)
+            resampled[:, 0] = np.interp(np.linspace(0, orig_len, new_len, endpoint=False), np.arange(orig_len), data[:, 0])
+            resampled[:, 1] = np.interp(np.linspace(0, orig_len, new_len, endpoint=False), np.arange(orig_len), data[:, 1])
+            return resampled
+        return data
     except Exception as e:
         print(f"[WAV LOADER] Error reading {path}: {e}")
         return None
 
-def synth_4bar_chunk(chords_list, drum_mode='lofi', chaos=1.0, prev_voicing_left=None, prev_voicing_right=None, trigger_bowl=False, bpm=90.0):
-    """Synthesizes a 4-bar chunk with Dual Pianos (Rhodes Left + Detuned Reverb Felt Right), sub bass, and drums."""
+def synth_4bar_chunk(chords_list, drum_mode='lofi', chaos=1.0, prev_voicing_left=None, prev_voicing_right=None, trigger_bowl=False, bpm=90.0, active_beat=1, layer_drums=1.0, binaural=(432.0, 6.0, 0.12)):
+    """Synthesizes a 4-bar chunk with Dual Pianos (Rhodes Left + Detuned Reverb Felt Right), sub bass, drums, and 20 Splice Lo-Fi beats."""
     beat_sec = 60.0 / bpm
     bar_sec = beat_sec * 4.0
     chunk_sec = 4 * bar_sec
@@ -347,66 +385,84 @@ def synth_4bar_chunk(chords_list, drum_mode='lofi', chaos=1.0, prev_voicing_left
     buf[:, 0] += rhodes_buf[:, 0] * 0.85 + felt_rev[:, 0] * 0.70
     buf[:, 1] += rhodes_buf[:, 1] * 0.85 + felt_rev[:, 1] * 0.70
 
-    # 5. Drums (Check for external Splice drum loop first, else synthesize lo-fi boom bap)
-    external_loop = None
-    loop_candidates = glob.glob(os.path.join(DRUM_LOOPS_DIR, '*.wav'))
-    if loop_candidates and drum_mode not in ('off', 'mute', 'cut'):
-        external_loop = read_wav_file(loop_candidates[0], target_sr=SR)
-        
-    if external_loop is not None and drum_mode not in ('off', 'mute', 'cut'):
-        loop_len = len(external_loop)
+    # 5. Beat Layer: Check for Active Lo-Fi Beat (1-20) from Splice Catalog, external loop, or procedural
+    beat_audio = get_beat_audio(active_beat) if (active_beat and drum_mode not in ('off', 'mute', 'cut')) else None
+    
+    if beat_audio is not None:
+        loop_len = len(beat_audio)
         for offset in range(0, chunk_samples, loop_len):
             rem = min(loop_len, chunk_samples - offset)
-            buf[offset:offset+rem, :] += external_loop[:rem, :] * 0.72
-    elif drum_mode not in ('off', 'mute', 'cut'):
-        # Procedural Chill Lo-Fi Boom-Bap Drums
-        for b_idx in range(4):
-            t_bar = b_idx * bar_sec
+            buf[offset:offset+rem, :] += beat_audio[:rem, :] * (float(layer_drums) * 0.85)
+    else:
+        # Check external loop candidates
+        external_loop = None
+        loop_candidates = glob.glob(os.path.join(DRUM_LOOPS_DIR, '*.wav'))
+        if loop_candidates and drum_mode not in ('off', 'mute', 'cut'):
+            external_loop = read_wav_file(loop_candidates[0], target_sr=SR)
             
-            # KICK: Pillowy 808 kick on beat 1 and beat 2.5
-            kick_beats = [0.0, 2.5] if chaos >= 0.7 else [0.0]
-            for kb in kick_beats:
-                t_k = t_bar + kb * beat_sec
-                i_k = int(t_k * SR)
-                dur = 0.42
-                n_samp = min(int(dur * SR), chunk_samples - i_k)
-                if n_samp <= 0: continue
-                t = np.linspace(0, dur, n_samp, endpoint=False)
-                f_env = 42.0 + 44.0 * np.exp(-t * 22.0)
-                phase = 2.0 * np.pi * np.cumsum(f_env) / SR
-                k_sig = np.sin(phase) * np.exp(-t * 6.5) * 0.72
-                buf[i_k:i_k+n_samp, 0] += k_sig
-                buf[i_k:i_k+n_samp, 1] += k_sig
+        if external_loop is not None and drum_mode not in ('off', 'mute', 'cut'):
+            loop_len = len(external_loop)
+            for offset in range(0, chunk_samples, loop_len):
+                rem = min(loop_len, chunk_samples - offset)
+                buf[offset:offset+rem, :] += external_loop[:rem, :] * 0.72
+        elif drum_mode not in ('off', 'mute', 'cut'):
+            # Procedural Chill Lo-Fi Boom-Bap Drums
+            for b_idx in range(4):
+                t_bar = b_idx * bar_sec
                 
-            # SNARE: Soft vinyl snare on beat 2 and 4
-            for sb in [1.0, 3.0]:
-                t_s = t_bar + sb * beat_sec
-                i_s = int(t_s * SR)
-                dur = 0.30
-                n_samp = min(int(dur * SR), chunk_samples - i_s)
-                if n_samp <= 0: continue
-                t = np.linspace(0, dur, n_samp, endpoint=False)
-                body = np.sin(2.0 * math.pi * 175.0 * t) * np.exp(-t * 25.0) * 0.35
-                noise = np.random.uniform(-1, 1, n_samp) * np.exp(-t * 16.0) * 0.26
-                s_sig = (body + noise) * 0.58
-                buf[i_s:i_s+n_samp, 0] += s_sig
-                buf[i_s:i_s+n_samp, 1] += s_sig
-                
-            # HI-HATS: Swung 8th notes with humanized velocity
-            for h in range(8):
-                swing = 0.035 if (h % 2 == 1) else 0.0
-                t_h = t_bar + (h * 0.5 + swing) * beat_sec
-                i_h = int(t_h * SR)
-                dur = 0.075
-                n_samp = min(int(dur * SR), chunk_samples - i_h)
-                if n_samp <= 0: continue
-                t = np.linspace(0, dur, n_samp, endpoint=False)
-                hat = np.random.uniform(-1, 1, n_samp) * np.exp(-t * 55.0) * (0.10 if h%2==1 else 0.16)
-                buf[i_h:i_h+n_samp, 0] += hat
-                buf[i_h:i_h+n_samp, 1] += hat * 0.85
+                # KICK: Pillowy 808 kick on beat 1 and beat 2.5
+                kick_beats = [0.0, 2.5] if chaos >= 0.7 else [0.0]
+                for kb in kick_beats:
+                    t_k = t_bar + kb * beat_sec
+                    i_k = int(t_k * SR)
+                    dur = 0.42
+                    n_samp = min(int(dur * SR), chunk_samples - i_k)
+                    if n_samp <= 0: continue
+                    t = np.linspace(0, dur, n_samp, endpoint=False)
+                    f_env = 42.0 + 44.0 * np.exp(-t * 22.0)
+                    phase = 2.0 * np.pi * np.cumsum(f_env) / SR
+                    k_sig = np.sin(phase) * np.exp(-t * 6.5) * 0.72
+                    buf[i_k:i_k+n_samp, 0] += k_sig
+                    buf[i_k:i_k+n_samp, 1] += k_sig
+                    
+                # SNARE: Soft vinyl snare on beat 2 and 4
+                for sb in [1.0, 3.0]:
+                    t_s = t_bar + sb * beat_sec
+                    i_s = int(t_s * SR)
+                    dur = 0.30
+                    n_samp = min(int(dur * SR), chunk_samples - i_s)
+                    if n_samp <= 0: continue
+                    t = np.linspace(0, dur, n_samp, endpoint=False)
+                    body = np.sin(2.0 * math.pi * 175.0 * t) * np.exp(-t * 25.0) * 0.35
+                    noise = np.random.uniform(-1, 1, n_samp) * np.exp(-t * 16.0) * 0.26
+                    s_sig = (body + noise) * 0.58
+                    buf[i_s:i_s+n_samp, 0] += s_sig
+                    buf[i_s:i_s+n_samp, 1] += s_sig
+                    
+                # HI-HATS: Swung 8th notes with humanized velocity
+                for h in range(8):
+                    swing = 0.035 if (h % 2 == 1) else 0.0
+                    t_h = t_bar + (h * 0.5 + swing) * beat_sec
+                    i_h = int(t_h * SR)
+                    dur = 0.075
+                    n_samp = min(int(dur * SR), chunk_samples - i_h)
+                    if n_samp <= 0: continue
+                    t = np.linspace(0, dur, n_samp, endpoint=False)
+                    hat = np.random.uniform(-1, 1, n_samp) * np.exp(-t * 55.0) * (0.10 if h%2==1 else 0.16)
+                    buf[i_h:i_h+n_samp, 0] += hat
+                    buf[i_h:i_h+n_samp, 1] += hat * 0.85
+
+    # 5B. Continuous Binaural Healing Wave (e.g. 432 Hz Carrier + 6 Hz Theta Entrainment)
+    b_carrier, b_beat, b_gain = binaural
+    if b_gain > 0:
+        t_all = np.linspace(0, chunk_sec, chunk_samples, endpoint=False)
+        w_L = np.sin(2.0 * math.pi * b_carrier * t_all) * (b_gain * 0.45)
+        w_R = np.sin(2.0 * math.pi * (b_carrier + b_beat) * t_all) * (b_gain * 0.45)
+        buf[:, 0] += w_L
+        buf[:, 1] += w_R
 
     # 6. Crystal Singing Bowl Chime (432 Hz Downbeat Resonance)
-    if trigger_bowl or (chaos > 1.4 and b_idx == 0):
+    if trigger_bowl:
         b_dur = min(8.0, chunk_sec)
         n_b = int(b_dur * SR)
         t_b = np.linspace(0, b_dur, n_b, endpoint=False)
@@ -462,14 +518,16 @@ def read_stream_state():
         pass
     return {}
 
-def update_live_overlay_files(cmd, author, chords, drums, bpm=90.0, mantra=None, voice=None, clam_rate="0.0%", gt_comp="100.0%"):
+def update_live_overlay_files(cmd, author, chords, drums, bpm=90.0, mantra=None, voice=None, clam_rate="0.0%", gt_comp="100.0%", beat_name=""):
     clean_author = author if author.startswith('@') else f"@{author}"
     if mantra:
         cmd_text = f"MANTRA: \"{mantra}\" [{voice or 'Rachel'}] (by {clean_author})"
+    elif beat_name:
+        cmd_text = f"BEAT: {beat_name}  |  STEERED BY: {clean_author}"
     else:
         cmd_text = f"PROMPT: {cmd}  [Steered by {clean_author}]"
         
-    chords_text = f"CHORDS: {' -> '.join(chords)}  |  TEMPO: {int(bpm)} BPM (Lo-Fi)"
+    chords_text = f"CHORDS: {' -> '.join(chords)}  |  TEMPO: {int(bpm)} BPM (432Hz)"
     status_text = f"THIRI GOVERNOR: {clam_rate} CLAMS | GUIDE TONES: {gt_comp} LOCKED | 432 Hz"
     
     for path, content in [
@@ -543,6 +601,15 @@ def main():
 
         last_cmd = state.get("last_command", f"!prog {' | '.join(chords)}")
 
+        active_beat = state.get("active_beat", 1)
+        layer_drums = float(state.get("layer_drums", 1.0))
+        beat_name = state.get("beat_name", "")
+        binaural = (
+            float(state.get("binaural_carrier_hz", 432.0)),
+            float(state.get("binaural_beat_hz", 6.0)),
+            float(state.get("binaural_gain", 0.12))
+        )
+
         # Synthesize chunk under THIRI governance
         chunk_f32, last_voicing_left, last_voicing_right, clam_rate, gt_comp = synth_4bar_chunk(
             chords_list=chords,
@@ -551,7 +618,10 @@ def main():
             prev_voicing_left=last_voicing_left,
             prev_voicing_right=last_voicing_right,
             trigger_bowl=trigger_bowl,
-            bpm=bpm
+            bpm=bpm,
+            active_beat=active_beat,
+            layer_drums=layer_drums,
+            binaural=binaural
         )
 
         update_live_overlay_files(
@@ -563,10 +633,11 @@ def main():
             mantra=mantra,
             voice=voice,
             clam_rate=clam_rate,
-            gt_comp=gt_comp
+            gt_comp=gt_comp,
+            beat_name=beat_name
         )
 
-        print(f"⚡ [THIRI DUAL PIANO] {source_desc} | Clams={clam_rate} | GT={gt_comp} | Drums={drums} | Tempo={bpm} BPM")
+        print(f"⚡ [THIRI DUAL PIANO] {source_desc} | Beat={active_beat} ({beat_name}) | Clams={clam_rate} | GT={gt_comp} | Tempo={bpm} BPM")
         
         # Apply 15ms equal-power crossfade at chunk boundary
         fade_in = np.linspace(0.0, 1.0, fade_len)[:, np.newaxis]

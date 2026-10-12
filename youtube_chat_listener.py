@@ -188,21 +188,56 @@ def parse_single_command(text, author_name):
             "commanded_by": f"@{clean_author}"
         }
 
-    # 3. Drum / Beat Control: !beat <on|off|lofi|mute> or !drums
+    # 3. Drum / Beat Control: !beat <1-20|off|lofi> or !drums
     elif cmd in ('!beat', '!drums', '!drum'):
         sub = parts[1].lower() if len(parts) > 1 else 'on'
         if sub in ('off', 'mute', 'cut', 'stop', 'quiet'):
             return {
                 "drums": "off",
+                "active_beat": 0,
                 "last_command": "!beat off",
+                "commanded_by": f"@{clean_author}"
+            }
+        elif sub.isdigit():
+            b_num = max(1, min(20, int(sub)))
+            return {
+                "drums": "lofi",
+                "active_beat": b_num,
+                "last_command": f"!beat #{b_num:02d}",
+                "commanded_by": f"@{clean_author}"
+            }
+        elif sub in ('lofi', 'piano', '0', 'procedural'):
+            return {
+                "drums": "lofi",
+                "active_beat": 0,
+                "last_command": "!beat procedural",
                 "commanded_by": f"@{clean_author}"
             }
         else:
             return {
                 "drums": "lofi",
-                "last_command": "!beat lofi",
+                "last_command": f"!beat {sub}",
                 "commanded_by": f"@{clean_author}"
             }
+
+    # 3B. Binaural Entrainment: !binaural <carrier_hz> or !theta <hz> / !alpha <hz>
+    elif cmd in ('!binaural', '!theta', '!alpha') and len(parts) > 1:
+        try:
+            val = float(parts[1])
+            if cmd == '!binaural':
+                return {
+                    "binaural_carrier_hz": max(100.0, min(963.0, val)),
+                    "last_command": f"!binaural {val:.0f}Hz",
+                    "commanded_by": f"@{clean_author}"
+                }
+            else:
+                return {
+                    "binaural_beat_hz": max(1.0, min(30.0, val)),
+                    "last_command": f"{cmd} {val:.1f}Hz",
+                    "commanded_by": f"@{clean_author}"
+                }
+        except ValueError:
+            return None
 
     # 4. Tempo / BPM: !bpm <60-95>
     elif cmd in ('!bpm', '!tempo') and len(parts) > 1:

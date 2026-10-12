@@ -1,0 +1,827 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>THIRI Live // Conductor Console</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #090A10;
+      --card-bg: #12131F;
+      --card-hover: #191B2B;
+      --border: #23263B;
+      --gold: #DEB938;
+      --gold-light: #F3D467;
+      --cyan: #00D2FF;
+      --green: #2ECC71;
+      --red: #E74C3C;
+      --paper: #F5F5FA;
+      --muted: #8E92B2;
+      --radius: 12px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg);
+      color: var(--paper);
+      font-family: 'Inter', sans-serif;
+      padding-bottom: 60px;
+      line-height: 1.5;
+    }
+    header {
+      background: rgba(14, 15, 26, 0.95);
+      border-bottom: 1px solid var(--border);
+      padding: 16px 32px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      backdrop-filter: blur(12px);
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+    }
+    .brand-logo {
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      background: linear-gradient(135deg, var(--gold), #99781B);
+      color: #000;
+      font-family: 'Cinzel', serif;
+      font-weight: 800;
+      font-size: 1.3rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .brand-title {
+      font-family: 'Cinzel', serif;
+      font-size: 1.3rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      color: var(--paper);
+    }
+    .live-indicator {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px;
+      border-radius: 999px;
+      background: rgba(46, 204, 113, 0.15);
+      border: 1px solid var(--green);
+      color: var(--green);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+    .live-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 10px var(--green);
+      animation: pulse 1.5s infinite;
+    }
+    @keyframes pulse {
+      0% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.85); }
+      100% { opacity: 1; transform: scale(1); }
+    }
+    .container {
+      max-width: 1280px;
+      margin: 28px auto;
+      padding: 0 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+    .status-banner {
+      background: linear-gradient(135deg, #171829 0%, #0E0F1A 100%);
+      border: 1px solid var(--gold);
+      border-radius: var(--radius);
+      padding: 22px 28px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 18px;
+      box-shadow: 0 12px 30px rgba(0,0,0,0.5);
+    }
+    .stat-box { display: flex; flex-direction: column; gap: 4px; }
+    .stat-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+    .stat-val {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--paper);
+    }
+    .stat-val.gold { color: var(--gold-light); font-family: 'Cinzel', serif; }
+    .stat-val.cyan { color: var(--cyan); font-family: 'JetBrains Mono', monospace; }
+
+    .grid-2col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+    @media (max-width: 900px) {
+      .grid-2col { grid-template-columns: 1fr; }
+    }
+
+    .panel {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+    }
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 18px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border);
+    }
+    .panel-title {
+      font-family: 'Cinzel', serif;
+      font-size: 1.15rem;
+      color: var(--gold-light);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* 4-Layer Mixer Sliders */
+    .mixer-row {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .channel-strip {
+      background: #0B0C15;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 14px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+    .strip-meta {
+      flex: 1.2;
+    }
+    .strip-title {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--paper);
+    }
+    .strip-sub {
+      font-size: 0.75rem;
+      color: var(--muted);
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .strip-control {
+      flex: 2;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .volume-slider {
+      flex: 1;
+      height: 6px;
+      accent-color: var(--gold);
+      cursor: pointer;
+    }
+    .val-display {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8rem;
+      color: var(--gold-light);
+      min-width: 44px;
+      text-align: right;
+    }
+    .btn-mute {
+      background: #1A1C2B;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 0.75rem;
+      font-family: 'JetBrains Mono', monospace;
+      padding: 6px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .btn-mute.active {
+      background: rgba(231, 76, 60, 0.2);
+      border-color: var(--red);
+      color: var(--red);
+    }
+
+    /* Key buttons */
+    .key-buttons {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 8px;
+      margin-top: 10px;
+    }
+    .key-btn {
+      background: #0B0C15;
+      border: 1px solid var(--border);
+      color: var(--paper);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.9rem;
+      font-weight: 600;
+      padding: 10px 0;
+      border-radius: 6px;
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.15s;
+    }
+    .key-btn:hover {
+      background: #1C1E30;
+      border-color: var(--gold);
+      color: var(--gold-light);
+    }
+    .key-btn.active {
+      background: var(--gold);
+      color: #000;
+      border-color: var(--gold-light);
+      font-weight: 700;
+      box-shadow: 0 0 12px rgba(222, 185, 56, 0.4);
+    }
+
+    /* Big Action Buttons */
+    .btn-action {
+      background: linear-gradient(135deg, var(--gold) 0%, #BA9522 100%);
+      color: #000;
+      border: none;
+      border-radius: 8px;
+      padding: 14px 20px;
+      font-weight: 700;
+      font-size: 0.95rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      width: 100%;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.4);
+      transition: all 0.15s;
+    }
+    .btn-action:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(222, 185, 56, 0.35);
+    }
+
+    /* 20 Beats Grid */
+    .beats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 16px;
+    }
+    .beat-card {
+      background: #0D0E18;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      transition: all 0.2s;
+      position: relative;
+    }
+    .beat-card:hover {
+      border-color: var(--gold);
+      background: #141624;
+      transform: translateY(-2px);
+    }
+    .beat-card.current {
+      border-color: var(--green);
+      background: rgba(46, 204, 113, 0.08);
+      box-shadow: 0 0 18px rgba(46, 204, 113, 0.25);
+    }
+    .beat-card.current::before {
+      content: 'ON AIR';
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.68rem;
+      color: var(--green);
+      background: rgba(46, 204, 113, 0.18);
+      border: 1px solid var(--green);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-weight: 700;
+    }
+    .beat-title {
+      font-weight: 700;
+      font-size: 1.05rem;
+      color: var(--paper);
+    }
+    .beat-meta {
+      display: flex;
+      gap: 10px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      color: var(--gold-light);
+    }
+    .beat-desc {
+      font-size: 0.82rem;
+      color: var(--muted);
+      line-height: 1.4;
+      min-height: 38px;
+    }
+    .beat-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 6px;
+    }
+    .btn-preview {
+      background: #181A29;
+      border: 1px solid var(--border);
+      color: var(--paper);
+      font-size: 0.75rem;
+      font-family: 'JetBrains Mono', monospace;
+      padding: 7px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      flex: 1;
+    }
+    .btn-switch {
+      background: var(--gold);
+      border: none;
+      color: #000;
+      font-size: 0.75rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 700;
+      padding: 7px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      flex: 1.3;
+    }
+    .btn-switch:hover {
+      background: var(--gold-light);
+    }
+
+    /* Live Chat Commands helper */
+    .cmd-box {
+      background: #05060A;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 16px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.82rem;
+      color: var(--cyan);
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .cmd-item {
+      display: flex;
+      justify-content: space-between;
+      border-bottom: 1px dashed #1B1E30;
+      padding-bottom: 6px;
+    }
+    .cmd-item span:first-child { color: var(--gold-light); font-weight: 600; }
+    .cmd-item span:last-child { color: var(--muted); }
+  </style>
+</head>
+<body>
+
+  <header>
+    <a href="#" class="brand">
+      <div class="brand-logo">T</div>
+      <div>
+        <span class="brand-title">THIRI</span>
+        <span style="font-size: 0.75rem; color: var(--gold); font-family: 'JetBrains Mono'; margin-left: 6px;">LIVE STATION // CONSOLE</span>
+      </div>
+    </a>
+    <div style="display: flex; gap: 14px; align-items: center;">
+      <span class="live-indicator">
+        <span class="live-dot"></span> BROADCAST ACTIVE
+      </span>
+    </div>
+  </header>
+
+  <div class="container">
+
+    <!-- Active Station Status Banner -->
+    <div class="status-banner">
+      <div class="stat-box">
+        <span class="stat-label">Active Beat</span>
+        <span class="stat-val gold" id="disp-beat-name">01_Midnight_Jazz_Djembe</span>
+      </div>
+      <div class="stat-box">
+        <span class="stat-label">Harmonic Key & Tempo</span>
+        <span class="stat-val cyan" id="disp-key-bpm">C Minor • 90.0 BPM</span>
+      </div>
+      <div class="stat-box">
+        <span class="stat-label">Binaural Entrainment</span>
+        <span class="stat-val" id="disp-binaural">432 Hz • Theta (6.0 Hz)</span>
+      </div>
+      <div class="stat-box">
+        <span class="stat-label">Steered By</span>
+        <span class="stat-val" id="disp-author">@BluesPrinceMedia</span>
+      </div>
+    </div>
+
+    <!-- Dual Column: Controls & Mixer -->
+    <div class="grid-2col">
+
+      <!-- Column 1: 4-Layer Soundboard -->
+      <div class="panel">
+        <div class="panel-header">
+          <h2 class="panel-title">🎛️ 4-Layer Real-Time Mixer</h2>
+          <span style="font-family: 'JetBrains Mono'; font-size: 0.72rem; color: var(--muted)">Continuous Non-Destructive Slew</span>
+        </div>
+
+        <div class="mixer-row">
+          <!-- Layer 1 -->
+          <div class="channel-strip">
+            <div class="strip-meta">
+              <div class="strip-title">Layer 1: Drum Loop</div>
+              <div class="strip-sub">Kick &amp; Snare Foundation</div>
+            </div>
+            <div class="strip-control">
+              <input type="range" min="0" max="1" step="0.05" value="1.0" class="volume-slider" id="slider-drums">
+              <span class="val-display" id="val-drums">100%</span>
+              <button class="btn-mute" id="mute-drums">Mute</button>
+            </div>
+          </div>
+
+          <!-- Layer 2 -->
+          <div class="channel-strip">
+            <div class="strip-meta">
+              <div class="strip-title">Layer 2: Chordal Loop</div>
+              <div class="strip-sub">Rhodes / Keys / Chimes / Pad</div>
+            </div>
+            <div class="strip-control">
+              <input type="range" min="0" max="1" step="0.05" value="0.85" class="volume-slider" id="slider-chords">
+              <span class="val-display" id="val-chords">85%</span>
+              <button class="btn-mute" id="mute-chords">Mute</button>
+            </div>
+          </div>
+
+          <!-- Layer 3 -->
+          <div class="channel-strip">
+            <div class="strip-meta">
+              <div class="strip-title">Layer 3: Primary Percussion</div>
+              <div class="strip-sub">Shakers &amp; High Hats Pocket</div>
+            </div>
+            <div class="strip-control">
+              <input type="range" min="0" max="1" step="0.05" value="0.70" class="volume-slider" id="slider-perc-high">
+              <span class="val-display" id="val-perc-high">70%</span>
+              <button class="btn-mute" id="mute-perc-high">Mute</button>
+            </div>
+          </div>
+
+          <!-- Layer 4 -->
+          <div class="channel-strip">
+            <div class="strip-meta">
+              <div class="strip-title">Layer 4: Mid Percussion</div>
+              <div class="strip-sub">Djembe / Metabowls / Wood</div>
+            </div>
+            <div class="strip-control">
+              <input type="range" min="0" max="1" step="0.05" value="0.80" class="volume-slider" id="slider-perc-mid">
+              <span class="val-display" id="val-perc-mid">80%</span>
+              <button class="btn-mute" id="mute-perc-mid">Mute</button>
+            </div>
+          </div>
+        </div>
+
+        <div style="margin-top: 18px;">
+          <button class="btn-action" id="btn-bowl">
+            🔔 Strike 432 Hz Crystal Singing Bowl
+          </button>
+        </div>
+      </div>
+
+      <!-- Column 2: Macro Steering & Harmonic Modulation -->
+      <div class="panel">
+        <div class="panel-header">
+          <h2 class="panel-title">🧭 Macro Harmonic &amp; Binaural Steering</h2>
+          <span style="font-family: 'JetBrains Mono'; font-size: 0.72rem; color: var(--muted)">THIRI Z/12 Engine</span>
+        </div>
+
+        <!-- Key Center -->
+        <label style="font-size: 0.8rem; font-family: 'JetBrains Mono'; color: var(--muted); text-transform: uppercase;">Harmonic Key Center (Tonic)</label>
+        <div class="key-buttons" id="key-buttons-grid">
+          <button class="key-btn active" data-key="C">C</button>
+          <button class="key-btn" data-key="G">G</button>
+          <button class="key-btn" data-key="D">D</button>
+          <button class="key-btn" data-key="A">A</button>
+          <button class="key-btn" data-key="E">E</button>
+          <button class="key-btn" data-key="B">B</button>
+          <button class="key-btn" data-key="F">F</button>
+          <button class="key-btn" data-key="Bb">B♭</button>
+          <button class="key-btn" data-key="Eb">E♭</button>
+          <button class="key-btn" data-key="Ab">A♭</button>
+          <button class="key-btn" data-key="Db">D♭</button>
+          <button class="key-btn" data-key="F#">F♯</button>
+        </div>
+
+        <!-- Tempo Slider -->
+        <div style="margin-top: 20px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+            <label style="font-size: 0.8rem; font-family: 'JetBrains Mono'; color: var(--muted); text-transform: uppercase;">Station Tempo (80 to 95 BPM)</label>
+            <span style="font-family: 'JetBrains Mono'; font-weight: 700; color: var(--cyan)" id="bpm-readout">90.0 BPM</span>
+          </div>
+          <input type="range" min="80" max="95" step="0.5" value="90.0" class="volume-slider" style="width: 100%;" id="slider-bpm">
+        </div>
+
+        <!-- Binaural Theta Slider -->
+        <div style="margin-top: 18px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+            <label style="font-size: 0.8rem; font-family: 'JetBrains Mono'; color: var(--muted); text-transform: uppercase;">Binaural Brainwave Entrainment</label>
+            <span style="font-family: 'JetBrains Mono'; font-weight: 700; color: var(--gold-light)" id="binaural-readout">432 Hz Carrier + 6.0 Hz Theta</span>
+          </div>
+          <div style="display: flex; gap: 12px;">
+            <input type="range" min="1" max="15" step="0.5" value="6.0" class="volume-slider" style="flex: 2;" id="slider-theta">
+            <select id="select-carrier" style="background: #0B0C15; border: 1px solid var(--border); color: var(--paper); border-radius: 6px; padding: 4px 8px; font-family: 'JetBrains Mono'; font-size: 0.8rem;">
+              <option value="432">432 Hz (Healing)</option>
+              <option value="528">528 Hz (Transformation)</option>
+              <option value="396">396 Hz (Liberating)</option>
+              <option value="639">639 Hz (Connection)</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Spoken Mantra Dispatcher -->
+        <div style="margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--border);">
+          <label style="font-size: 0.8rem; font-family: 'JetBrains Mono'; color: var(--muted); text-transform: uppercase;">Spoken Affirmation (ElevenLabs with -12dB Ducking)</label>
+          <div style="display: flex; gap: 8px; margin-top: 8px;">
+            <input type="text" id="input-mantra" placeholder='e.g. "Focus deeply on your breath..."' style="flex: 1; background: #0B0C15; border: 1px solid var(--border); border-radius: 6px; padding: 10px 12px; color: var(--paper); font-size: 0.85rem; outline: none;">
+            <select id="select-voice" style="background: #0B0C15; border: 1px solid var(--border); color: var(--paper); border-radius: 6px; padding: 8px 10px; font-family: 'JetBrains Mono'; font-size: 0.8rem;">
+              <option value="rachel">Rachel</option>
+              <option value="aura">Aura</option>
+              <option value="adam">Adam</option>
+              <option value="monk">Monk</option>
+            </select>
+            <button id="btn-send-mantra" style="background: #1C1E30; border: 1px solid var(--gold); color: var(--gold-light); border-radius: 6px; padding: 0 14px; font-weight: 600; cursor: pointer;">Send</button>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- 20 Lo-Fi Beats Selector Grid -->
+    <div class="panel">
+      <div class="panel-header">
+        <h2 class="panel-title">🎵 20 Curated 4-Layer Lo-Fi Beats (80 to 95 BPM)</h2>
+        <span style="font-family: 'JetBrains Mono'; font-size: 0.72rem; color: var(--gold)">Click 'Switch Stream Beat' to Air in Real Time</span>
+      </div>
+
+      <div class="beats-grid" id="beats-grid">
+        <!-- Rendered dynamically from /api/beats -->
+      </div>
+    </div>
+
+    <!-- Live Audience Chat Steering Guide -->
+    <div class="panel">
+      <div class="panel-header">
+        <h2 class="panel-title">💬 Live YouTube Chat Co-Composition Cheatsheet</h2>
+        <span style="font-family: 'JetBrains Mono'; font-size: 0.72rem; color: var(--muted)">Give these commands to your live stream audience</span>
+      </div>
+
+      <div class="cmd-box">
+        <div class="cmd-item">
+          <span>!beat &lt;1-20&gt;</span>
+          <span>Switch stream to any of the 20 Lo-Fi beats (e.g. !beat 3 or !beat 18)</span>
+        </div>
+        <div class="cmd-item">
+          <span>!key &lt;note&gt;</span>
+          <span>Modulate station key center (e.g. !key G, !key Eb, !key D)</span>
+        </div>
+        <div class="cmd-item">
+          <span>!bpm &lt;80-95&gt;</span>
+          <span>Adjust playback tempo smoothly with 4.5s Tidal Momentum slew</span>
+        </div>
+        <div class="cmd-item">
+          <span>!bowl</span>
+          <span>Strike the 432 Hz crystal singing bowl on the next downbeat</span>
+        </div>
+        <div class="cmd-item">
+          <span>!theta &lt;hz&gt; / !alpha &lt;hz&gt;</span>
+          <span>Adjust binaural wave frequency (e.g. !theta 6.0 for deep meditation)</span>
+        </div>
+        <div class="cmd-item">
+          <span>!mantra "quote" !voice &lt;name&gt;</span>
+          <span>Queue spoken affirmation with ElevenLabs &amp; automatic -12 dB music ducking</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Audio preview element for local auditioning -->
+  <audio id="local-preview" style="display: none;"></audio>
+
+  <script>
+    let currentState = {};
+    let beatsCatalog = [];
+    const previewAudio = document.getElementById("local-preview");
+    let activePreviewBtn = null;
+
+    async function fetchState() {
+      try {
+        const res = await fetch('/api/state');
+        if (res.ok) {
+          currentState = await res.json();
+          updateUIWithState();
+        }
+      } catch (e) {
+        console.error("Failed to fetch state:", e);
+      }
+    }
+
+    async function sendControl(updates) {
+      try {
+        const res = await fetch('/api/control', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(updates)
+        });
+        if (res.ok) {
+          const data = await res.json();
+          currentState = data.state;
+          updateUIWithState();
+        }
+      } catch (e) {
+        console.error("Failed to update control:", e);
+      }
+    }
+
+    function updateUIWithState() {
+      // Banner
+      document.getElementById("disp-beat-name").textContent = currentState.beat_name || "Procedural Dual-Piano";
+      document.getElementById("disp-key-bpm").textContent = `${currentState.active_key || 'C'} • ${(currentState.tempo_bpm || 90).toFixed(1)} BPM`;
+      document.getElementById("disp-binaural").textContent = `${currentState.binaural_carrier_hz || 432} Hz • Theta (${(currentState.binaural_beat_hz || 6).toFixed(1)} Hz)`;
+      document.getElementById("disp-author").textContent = currentState.commanded_by || "@BluesPrinceMedia";
+
+      // Tempo slider
+      if (document.activeElement !== document.getElementById("slider-bpm")) {
+        document.getElementById("slider-bpm").value = currentState.tempo_bpm || 90;
+        document.getElementById("bpm-readout").textContent = `${(currentState.tempo_bpm || 90).toFixed(1)} BPM`;
+      }
+
+      // Key buttons
+      document.querySelectorAll(".key-btn").forEach(btn => {
+        if (btn.dataset.key === currentState.active_key) {
+          btn.classList.add("active");
+        } else {
+          btn.classList.remove("active");
+        }
+      });
+
+      // Highlight active beat card
+      document.querySelectorAll(".beat-card").forEach(card => {
+        if (parseInt(card.dataset.id, 10) === parseInt(currentState.active_beat, 10)) {
+          card.classList.add("current");
+        } else {
+          card.classList.remove("current");
+        }
+      });
+    }
+
+    async function loadBeats() {
+      try {
+        const res = await fetch('/api/beats');
+        if (res.ok) {
+          beatsCatalog = await res.json();
+          renderBeatsGrid();
+        }
+      } catch (e) {
+        console.error("Failed to load beats catalog:", e);
+      }
+    }
+
+    function renderBeatsGrid() {
+      const grid = document.getElementById("beats-grid");
+      grid.innerHTML = "";
+
+      beatsCatalog.forEach(b => {
+        const card = document.createElement("div");
+        card.className = "beat-card";
+        card.dataset.id = b.id;
+        if (parseInt(b.id, 10) === parseInt(currentState.active_beat, 10)) {
+          card.classList.add("current");
+        }
+
+        const mp3Url = `/audio/${b.name}.mp3`;
+
+        card.innerHTML = `
+          <div class="beat-title">#${b.id.toString().padStart(2, '0')}: ${b.name.replace(/^\\d+_/, '').replace(/_/g, ' ')}</div>
+          <div class="beat-meta">
+            <span>⚡ ${b.bpm} BPM</span>
+            <span>🎹 ${b.key}</span>
+          </div>
+          <div class="beat-desc">${b.style}</div>
+          <div class="beat-actions">
+            <button class="btn-preview" data-mp3="${mp3Url}">▶ Audition</button>
+            <button class="btn-switch" data-id="${b.id}">🚀 Air on Stream</button>
+          </div>
+        `;
+
+        // Audition button (local preview in browser)
+        const btnPrev = card.querySelector(".btn-preview");
+        btnPrev.addEventListener("click", () => {
+          if (activePreviewBtn === btnPrev && !previewAudio.paused) {
+            previewAudio.pause();
+            btnPrev.textContent = "▶ Audition";
+            activePreviewBtn = null;
+          } else {
+            if (activePreviewBtn) activePreviewBtn.textContent = "▶ Audition";
+            previewAudio.src = mp3Url;
+            previewAudio.play();
+            btnPrev.textContent = "⏸ Pause";
+            activePreviewBtn = btnPrev;
+          }
+        });
+
+        // Air on Stream button
+        card.querySelector(".btn-switch").addEventListener("click", () => {
+          sendControl({
+            active_beat: b.id,
+            last_command: `!beat ${b.id} (${b.name})`,
+            commanded_by: "@BluesPrinceMedia"
+          });
+        });
+
+        grid.appendChild(card);
+      });
+    }
+
+    // Connect Sliders
+    document.getElementById("slider-bpm").addEventListener("input", (e) => {
+      document.getElementById("bpm-readout").textContent = `${parseFloat(e.target.value).toFixed(1)} BPM`;
+    });
+    document.getElementById("slider-bpm").addEventListener("change", (e) => {
+      sendControl({
+        tempo_bpm: parseFloat(e.target.value),
+        last_command: `!bpm ${e.target.value}`
+      });
+    });
+
+    // Key Buttons
+    document.querySelectorAll(".key-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const k = btn.dataset.key;
+        sendControl({
+          active_key: k,
+          last_command: `!key ${k}`
+        });
+      });
+    });
+
+    // Singing Bowl
+    document.getElementById("btn-bowl").addEventListener("click", () => {
+      sendControl({ trigger_bowl: true, last_command: "!bowl (Crystal Bowl 432Hz)" });
+      const orig = document.getElementById("btn-bowl").textContent;
+      document.getElementById("btn-bowl").textContent = "✨ Singing Bowl Resonating...";
+      setTimeout(() => { document.getElementById("btn-bowl").textContent = orig; }, 3000);
+    });
+
+    // Binaural Carrier & Theta
+    document.getElementById("slider-theta").addEventListener("change", (e) => {
+      const val = parseFloat(e.target.value);
+      sendControl({ binaural_beat_hz: val, last_command: `!theta ${val}Hz` });
+      document.getElementById("binaural-readout").textContent = `${document.getElementById("select-carrier").value} Hz Carrier + ${val.toFixed(1)} Hz Theta`;
+    });
+
+    document.getElementById("select-carrier").addEventListener("change", (e) => {
+      const val = parseFloat(e.target.value);
+      sendControl({ binaural_carrier_hz: val, last_command: `!binaural ${val}Hz` });
+      document.getElementById("binaural-readout").textContent = `${val} Hz Carrier + ${document.getElementById("slider-theta").value} Hz Theta`;
+    });
+
+    // Spoken Mantra
+    document.getElementById("btn-send-mantra").addEventListener("click", () => {
+      const txt = document.getElementById("input-mantra").value.trim();
+      const voice = document.getElementById("select-voice").value;
+      if (txt) {
+        sendControl({
+          active_mantra: txt,
+          active_voice: voice.capitalize(),
+          last_command: `!mantra "${txt}" !voice ${voice}`
+        });
+        document.getElementById("input-mantra").value = "";
+      }
+    });
+
+    // Auto poll state every 2 seconds
+    fetchState();
+    loadBeats();
+    setInterval(fetchState, 2000);
+  </script>
+</body>
+</html>
